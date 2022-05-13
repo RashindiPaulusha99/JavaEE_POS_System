@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/">
+
+    <Resource
+            name="ajax/pos"
+            type="javax.sql.DataSource"
+            driveClassName="com.mysql.cj.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/thogakade"
+            username="root"
+            password="1234"
+            maxTotal="5"
+            initialiSize="5"
+    ></Resource>
+
+</Context>

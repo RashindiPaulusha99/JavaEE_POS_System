@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pos System</title>
+    <link rel="icon" href="assets/images/cart.png" >
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <script src="assets/bootstrap/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="assets/css/fonts/css/all.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&family=Lobster+Two:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body class="bg-image" style="background-image: radial-gradient(circle at top,lightblue,#000); overflow-x: hidden" >
+
+<main style="width: 100vw; height: 100vh;">
+
+    <!--navigation bar-->
+    <section style="width: 100%;">
+        <nav class="navbar navbar-expand-lg navbar-light p-2 mb-2 " style="background: rgba(255,255,255,0.8);box-shadow: -1px 1px 20px 10px black">
+            <div class="container-fluid">
+
+                <img src="assets/images/cart.png" alt="" style="width: 50px">
+                <a class="navbar-brand " style="font-family: 'Courgette', cursive;" href="#">RP POS System</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item me-3" id="home">
+                            <a class="nav-link active" aria-current="page" href="#" >
+                                <i class="fas fa-home fa-2x"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item  me-3" id="customer">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-users fa-2x"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item me-3" id="item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-box fa-2x"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item me-3" id="order">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shopping-cart fa-2x"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item me-3" id="orderDetails">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-list fa-2x"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <a class="nav-link active" aria-current="page" href="#" style="color: black">
+                    <i class="fas fa-sign-out-alt" style="color: black"></i>
+                    Logout
+                </a>
+
+            </div>
+        </nav>
+    </section>
+
+    <!--Home-->
+    <section class="container-fluid" id="homeSec">
+        <div class="row w-100 h-100">
+            <div class="col-12 col-lg-7 px-0 col-sm-12 col-md-12 me-3 ms-3 mt-4  " style="box-shadow: -1px 1px 8px 5px black;height: 80vh;">
+
+                <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="assets/images/img-04.jpg" class="d-block w-100 " alt="error loading" style="height: 80vh">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>First slide label</h5>
+                                <p>Some representative placeholder content for the first slide.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="assets/images/fruites.jpg" class="d-block w-100 " alt="error loading" style="height: 80vh">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Second slide label</h5>
+                                <p>Some representative placeholder content for the second slide.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="assets/images/featured_cocktails.jpg" class="d-block w-100 " alt="error loading" style="height: 80vh">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Third slide label</h5>
+                                <p>Some representative placeholder content for the third slide.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="col  h-100 ">
+                <div class="row mt-4 mb-3 ">
+                    <div class="col me-5 ms-5 mb-4 mt-3 " style="background-image: radial-gradient(circle at top,#b6d4fe,#1a1e21);box-shadow: -1px 1px 8px 5px black;">
+                        <i class="fas fa-users fa-4x text-white center d-flex justify-content-center mt-2"></i>
+                        <h2 class="text-center text-white" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">All</h2>
+                        <h2 class="text-center text-white" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">Customers</h2>
+                        <h1 id="customerCount" class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">0</h1>
+                    </div>
+                    <div class="col  me-5 ms-5 mb-4 mt-3 " style="background-image: radial-gradient(circle at top,#b6d4fe,#1a1e21);box-shadow: -1px 1px 8px 5px black;">
+                        <i class="fas fa-box fa-4x text-white center d-flex justify-content-center mt-2"></i>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">All</h2>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">Items</h2>
+                        <h1 id="itemCount" class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">0</h1>
+                    </div>
+                </div>
+
+                <div class="row mt-4 mb-4">
+                    <div class="col  me-5 ms-5 mb-5 mt-3 " style="background-image: radial-gradient(circle at top,#b6d4fe,#1a1e21);box-shadow: -1px 1px 8px 5px black;">
+                        <i class="fas fa-shopping-cart fa-4x text-white d-flex justify-content-center mt-2"></i>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">All</h2>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">Orders</h2>
+                        <h1 id="orderCount" class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">0</h1>
+                    </div>
+                    <div class="col  me-5 ms-5 mb-5 mt-3 " style="background-image: radial-gradient(circle at top,#b6d4fe,#1a1e21);box-shadow: -1px 1px 8px 5px black;">
+                        <i class="fas fa-file-invoice-dollar fa-4x text-white d-flex justify-content-center mt-2"></i>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">Daily</h2>
+                        <h2 class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">Income</h2>
+                        <h1 id="income" class="text-white text-center" style="transform: translateY(10%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;">0</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <h1 id="name" class="text-white" style="transform: translateY(-50%);text-transform: uppercase;text-shadow: 0 5px 10px rgba(0,0,0,1);mix-blend-mode: overlay;font-size: 2767%;position: absolute;top: 40%;bottom: 0; left: 5%;margin: auto;z-index: 1; width: 0">
+                RP
+            </h1>
+        </div>
+
+    </section>
+
+    <!--Customer-->
+    <div id="customerName" class="container-fluid  mt-3 shadow p-2 mb-3  rounded-circle  w-25 " style="display: none">
+        <h2 class="text-white mb-0 d-flex justify-content-center">
+            <i class="fas fa-users"></i>
+            Customer
+        </h2>
+    </div>
+
+    <section id="customerSec" class="container-fluid w-75  rounded  mt-0 mb-4"  style="background:#b6d4fe; box-shadow: -1px 1px 50px 10px black;border: 5px solid white">
+
+        <!--buttons-->
+        <div class="row mb-2" style="background: #706fd3">
+            <form >
+                <!--Search-->
+                <input class="form-control-sm me-0 mt-2 mb-2 w-50 border border-white" type="search" placeholder="Input NIC/Name/Phone Number Here" aria-label="Search" id="searchCustomer" />
+                <button class="btn btn-primary btn-sm ms-0 " type="button" style="box-shadow: -1px 1px 30px 5px white" id="btnSearchCustomer">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <!-- view customer button -->
+                <button type="button" class="btn btn-warning btn-sm mt-2 float-end shadow" id="btnViewCustomer">
+                    <i class="fas fa-user-friends"></i>
+                    View Customers
+                </button>
+
+                <!-- Add New button -->
+                <button type="button" class="btn  btn-sm me-2 float-end mt-2 float-end shadow" style="background-color: #2ed573;">
+                    <i class="fas fa-house-user"></i>
+                    New Customer
+                </button>
+            </form>
+
+        </div>
+
+        <!--input fields-->
+        <div class="row" style="background: #b6d4fe">
+            <form id="customerForm">
+                <!-- 3 column grid layout with text inputs for the id and first and last names -->
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mt-1" for="customerId">Customer ID</label>
+                            <input type="text" id="customerId" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="C00-xxx" />
+                            <p><small id="errorId" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-1" for="nameOfCustomer">Name</label>
+                            <input type="text" id="nameOfCustomer" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="xxxxx xxxxx xxxxx" />
+                            <p><small id="errorName" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <!-- Gender -->
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-0" for="gender">Gender</label>
+                            <input type="text" id="gender" class="form-control  rounded rounded-pill shadow mt-0 mb-0" placeholder="xxxx"/>
+                            <p><small id="errorGender" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <!-- Phone Number -->
+                        <div class="form-outline ">
+                            <label class="form-label text-black mt-0" for="contact">Contact</label>
+                            <input type="tel" id="contact" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="0xx-xxxxxxx"/>
+                            <p><small id="errorContact" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <!-- NIC -->
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-0" for="nic">NIC</label>
+                            <input type="text" id="nic" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="xxxxxxxxxV"/>
+                            <p><small id="errorNIC" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <!-- Address -->
+                        <div class="form-outline ">
+                            <label class="form-label text-black mt-0" for="address">Address</label>
+                            <input type="text" id="address" class="form-control rounded rounded-pill shadow mb-0 mt-0" placeholder="xxxxxxxxx"/>
+                            <p><small id="errorAddress" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <!--Email -->
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-0" for="email">Email</label>
+                            <input type="email" id="email" class="form-control  rounded rounded-pill shadow mb-0 mt-0" placeholder="email@example.com"/>
+                            <p><small id="errorEmail" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save button -->
+                <button  class="btn btn-info btn-sm btn-block mb-4 shadow" id="btnSaveCustomer" type="button">
+                    <i class="fas fa-plus-square"></i>
+                    Save
+                </button>
+
+                <!-- Edit button -->
+                <button id="btnEditCustomer" type="button" class="btn btn-sm btn-block mb-4 shadow" style="background-color: #e056fd">
+                    <i class="fas fa-edit"></i>
+                    Edit
+                </button>
+
+                <!-- Delete button -->
+                <button id="btnDeleteCustomer" type="button" class="btn  btn-sm btn-block mb-4 shadow" style="background-color: #ff6b6b">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete
+                </button>
+
+                <!-- Clear button -->
+                <button id="btnClearCustomer" type="button" class="btn  btn-sm btn-block mb-4 shadow" style="background-color: #ffdd59">
+                    <i class="fas fa-eraser"></i>
+                    Clear
+                </button>
+            </form>
+        </div>
+
+        <!--table-->
+        <div class=" mt-2 row ms-1 me-1 mb-2 ">
+            <table id="tblCustomer" class="table table-hover" >
+                <thead  style="background-color: #a29bfe; color: white">
+                <tr>
+                    <th scope="col" id="colId">ID</th>
+                    <th scope="col" id="colName">Name</th>
+                    <th scope="col" id="colGender">Gender</th>
+                    <th scope="col" id="colContact">Contact</th>
+                    <th scope="col" id="colNIC">NIC</th>
+                    <th scope="col" id="colAddress">Address</th>
+                    <th scope="col" id="colEmail">E-mail</th>
+                </tr>
+                </thead>
+                <tbody id="body" style="background-color: white;" >
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!--Item-->
+    <div id="itemName" class="container-fluid  mt-3 shadow p-2 mb-3  rounded-circle w-25 ">
+        <h2 class="text-white mb-0 d-flex justify-content-center">
+            <i class="fas fa-box"></i>
+            Item
+        </h2>
+    </div>
+
+    <section id="itemSec" class="container-fluid w-75  rounded  mt-0 mb-4"  style="background:#20c997; box-shadow: -1px 1px 50px 10px black;border: 5px solid white">
+
+        <!--buttons-->
+        <div class="row mb-2" style="background: darkcyan">
+            <form>
+                <!--Search-->
+                <input class="form-control-sm me-0 mt-2 mb-2 w-50 border border-white" type="search" placeholder="Input Code/Name Here" aria-label="Search" id="searchItem"/>
+                <button class="btn btn-primary btn-sm ms-0 " type="submit" style="box-shadow: -1px 1px 30px 5px white" id="btnSearchItem">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <!-- view item button -->
+                <button type="button" class="btn btn-warning btn-sm mt-2 float-end shadow">
+                    <i class="fas fa-boxes"></i>
+                    View Items
+                </button>
+
+                <!-- Add New button -->
+                <button type="button" class="btn  btn-sm me-2 float-end mt-2 float-end shadow" style="background-color: #2ed573;">
+                    <i class="fas fa-dolly-flatbed"></i>
+                    New Item
+                </button>
+            </form>
+
+        </div>
+
+        <!--input fields-->
+        <div class="row">
+            <form>
+                <!-- 3 column grid layout with text inputs for code and name and kind-->
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mt-1" for="itemCode">Item Code</label>
+                            <input type="text" id="itemCode" class="form-control mt-0 mb-0 rounded rounded-pill shadow" placeholder="I00-xxx" />
+                            <p><small id="errorCode" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-1" for="kind">Kind</label>
+                            <input type="text" id="kind" class="form-control mt-0 mb-0 rounded rounded-pill shadow" placeholder="xxxx" />
+                            <p><small id="errorKind" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-1" for="nameOfItem">Item Name</label>
+                            <input type="text" id="nameOfItem" class="form-control  mt-0 mb-0 rounded rounded-pill shadow" placeholder="xxxxx" />
+                            <p><small id="errorItemName" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <!-- Qty -->
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-0" for="qty">Quantity</label>
+                            <input type="text" id="qty" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="xx" />
+                            <p><small id="errorQty" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <!-- Price -->
+                        <div class="form-outline">
+                            <label class="form-label text-black mt-0" for="unitPrice">Unit Price</label>
+                            <input type="text" id="unitPrice" class="form-control rounded rounded-pill shadow mt-0 mb-0" placeholder="00.00" />
+                            <p><small id="errorPrice" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Save button -->
+                <button class="btn btn-info btn-sm btn-block mb-4 shadow" id="btnSaveItem" type="button">
+                    <i class="fas fa-plus-square"></i>
+                    Save
+                </button>
+
+                <!-- Edit button -->
+                <button class="btn btn-sm btn-block mb-4 shadow" style="background-color: #e056fd" id="btnEditItem" type="button">
+                    <i class="fas fa-edit"></i>
+                    Edit
+                </button>
+
+                <!-- Delete button -->
+                <button class="btn  btn-sm btn-block mb-4 shadow" style="background-color: #ff6b6b" id="btnDeleteItem" type="button">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete
+                </button>
+
+                <!-- Clear button -->
+                <button id="btnClearItem" type="button" class="btn  btn-sm btn-block mb-4 shadow" style="background-color: #ffdd59">
+                    <i class="fas fa-eraser"></i>
+                    Clear
+                </button>
+            </form>
+        </div>
+
+        <!--table-->
+        <div class="mt-2 row ms-1 me-1 mb-2">
+            <table class="table table-hover " id="tblItem">
+                <thead  style="background-color: #a29bfe; color: white">
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Kind</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit Price</th>
+                </tr>
+                </thead>
+                <tbody  style="background-color:white ">
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!--Order-->
+    <div id="orderName" class="container-fluid  mt-1 shadow p-2 mb-2  rounded-circle w-25 ">
+        <h2 class="text-white mb-0 d-flex justify-content-center">
+            <i class="fas fa-shopping-cart"></i>
+            Place Order
+        </h2>
+    </div>
+
+    <section id="orderSec" class="container-fluid  rounded  mt-0 mb-4 ">
+
+        <!--search order-->
+        <div class="row ">
+            <div class="col">
+                <input class="form-control-sm me-0 mt-0 mb-0 border border-white" type="search" placeholder="Input OrderId" aria-label="Search" id="searchOrder"  style="width: 30%;"/>
+                <button class="btn btn-primary btn-sm ms-0 " type="button" style="box-shadow: -1px 1px 30px 5px white" id="btnSearchOrder">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!--3 section-->
+        <div class="row ">
+
+            <!--Customer details-->
+            <div class="col w-25 me-3 ms-3 mb-2 mt-2 border border-5 border-white shadow" style="background-color: #b6d4fe">
+
+                <div class="row " style="background: #706fd3">
+                    <div class="col">
+                        <h4>Invoice Details</h4>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-warning btn-sm btn-block shadow float-end mt-1 mb-1 " id="btnNew">
+                            <i class="fas fa-plus-square"></i>
+                            New
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0 mt-3" for="orderId">Order ID</label>
+                            <input type="text" id="orderId" class="form-control form-control-sm shadow mb-2" placeholder="O00-0000" />
+                            <p><small id="errorOrderId" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0 mt-3" for="orderDate">Order Date</label>
+                            <input type="date" id="orderDate" class="form-control form-control-sm shadow mb-2"  />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <label class="form-label text-black mb-0" >Customer ID</label>
+                        <select aria-label="Default select example" class="form-select shadow" style="height: 32px" id="ids">
+                            <option selected></option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderCusId">ID</label>
+                            <input type="text" id="orderCusId" class="form-control form-control-sm shadow mb-2" placeholder="C00-0000" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderCusName">Name</label>
+                            <input type="text" id="orderCusName" class="form-control form-control-sm shadow mb-2" placeholder="xxxxx" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderCusContact">Contact</label>
+                            <input type="tel" id="orderCusContact" class="form-control form-control-sm shadow mb-2" placeholder="0xx-xxxxxxx" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderCusNIC">NIC</label>
+                            <input type="text" id="orderCusNIC" class="form-control form-control-sm shadow mb-2" placeholder="xxxxxxxxxV" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderCusAddress">Address</label>
+                            <input type="text" id="orderCusAddress" class="form-control form-control-sm shadow mb-3" placeholder="xxxxx" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--choose items-->
+            <div class="col w-25 me-3 ms-3 mb-2 border border-5 border-white mt-2 shadow" style="background-color: #20c997">
+                <div class="row " style="background-color: darkcyan">
+                    <h4>Item Selection</h4>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <label class="form-label text-black mb-0 mt-3" >Item Code</label>
+                        <select aria-label="Default select example" class="form-select shadow" style="height: 32px" id="codes">
+                            <option selected></option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0 mt-3" for="orderItemCode">Code</label>
+                            <input type="text" id="orderItemCode" class="form-control form-control-sm shadow mb-2" placeholder="I00-0000" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+
+                    <div class="form col ">
+                        <div class="form-outline">
+                            <label class="form-label text-black mb-0" for="orderKind">Kind</label>
+                            <input type="text" id="orderKind" class="form-control form-control-sm shadow mb-2" placeholder="xxxx" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderItemName">Item Name</label>
+                            <input type="text" id="orderItemName" class="form-control form-control-sm shadow mb-2" placeholder="xxxx" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderPrice">Unit Price</label>
+                            <input type="text" id="orderPrice" class="form-control form-control-sm shadow mb-2" placeholder="00.00" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="orderQty">Quantity On Hand</label>
+                            <input type="text" id="orderQty" class="form-control form-control-sm shadow mb-2" placeholder="00" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="sellQty">Order Quantity</label>
+                            <input type="text" id="sellQty" class="form-control form-control-sm shadow mb-2" placeholder="00" />
+                            <p><small id="errorSellQty" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="itemDiscount">Discount</label>
+                            <input type="text" id="itemDiscount" class="form-control form-control-sm shadow mb-2" placeholder="0%" />
+                            <p><small id="errordiscount" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <form>
+                        <!-- Add cart button -->
+                        <button type="button" class="btn btn-success btn-sm btn-block shadow float-end mt-4 mb-3 ms-2" id="btnAddCart">
+                            <i class="fas fa-cart-plus"></i>
+                            Add cart
+                        </button>
+
+                        <!-- clear Cart button -->
+                        <button type="button" class="btn btn-secondary btn-sm btn-block shadow float-end mt-4 mb-3 ms-2" id="btnClearCart">
+                            <i class="fas fa-eraser"></i>
+                            clear
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!--total price details-->
+            <div class="col w-25 me-3 ms-3 mb-2 mt-2 border border-5 border-white shadow" style="background-color: #f5c2c7">
+                <div class="row" style="background-color: #cf6a87">
+                    <h4>Final Total</h4>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label mb-0 mt-3" for="gross" style="color: #084298">Gross Amount :</label>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <input type="text" id="gross" class="form-control form-control-sm shadow mb-2 mt-3 text-primary" placeholder="00.00" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-danger mb-0 mt-1" for="net">Net Amount :</label>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <input type="text" id="net" class="form-control form-control-sm shadow mb-2 mt-1 text-danger" placeholder="00.00" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0 mt-2" for="cash">Cash</label>
+                            <input type="text" id="cash" class="form-control form-control-sm shadow mb-2" placeholder="00.00" />
+                            <p><small id="errorCash" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0 mt-2" for="discount">Discount</label>
+                            <input type="text" id="discount" class="form-control form-control-sm shadow mb-2 " placeholder="0%" />
+                            <p><small id="errorFinalDiscount" class="text-danger pl-1 mt-0 mb-0"></small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <div class="col">
+                        <div class="form-outline ">
+                            <label class="form-label text-black mb-0" for="balance">Balance</label>
+                            <input type="text" id="balance" class="form-control form-control-sm shadow mb-2" placeholder="00.00" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form row ">
+                    <form class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm btn-block shadow  mt-2 mb-3 rounded-pill" id="btnPurchase">
+                            <i class="fas fa-coins"></i>
+                            Purchase
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--table-->
+        <div class="  mt-2 row ms-1 me-1 mb-2">
+            <table class="table table-hover" id="tblOrder">
+                <thead  style="background-color: #a29bfe; color: white">
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Kind</th>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Delete</th>
+                </tr>
+                </thead>
+                <tbody  style="background-color:white ">
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!--Order Detail-->
+    <div id="orderDetailName" class="container-fluid  mt-1 shadow p-2 mb-2  rounded-circle w-25 ">
+        <h2 class="text-white mb-0 d-flex justify-content-center">
+            <i class="fas fa-list-alt"></i>
+            Order Details
+        </h2>
+    </div>
+
+    <section class="container-fluid mt-3" id="orderDetailSec">
+
+        <!--search order details-->
+        <section class="row mt-3 justify-content-around">
+            <div class="col-12 col-md-4">
+                <div class="shadow-sm pt-3 pb-5 px-3 py-3 mt-2">
+                    <h1 class="h1 mb-3 text-white">Order Details</h1>
+                    <div class="mb-3">
+                        <label class="form-label text-white" for="searchOrderId">Search OrderID</label>
+                        <input class="form-control" id="searchOrderId" placeholder="Input OrderID" type="text">
+                    </div>
+                    <button class="btn btn-primary" id="btnSearchOrders">Search</button>
+                    <button class="btn btn-danger" id="btnClear">Clear</button>
+                </div>
+            </div>
+
+            <!--order information-->
+            <div class="col-12 col-md-5">
+                <div class="row">
+                    <div class="mb-2 col">
+                        <label class="form-label fw-bold" for="OID">Order Id</label>
+                        <input class="form-control" id="OID"  type="text">
+                    </div>
+                    <div class="mb-2 col">
+                        <label class="form-label fw-bold" for="ODate">Order Date</label>
+                        <input class="form-control" id="ODate"  type="text">
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label fw-bold" for="cusId">Customer ID</label>
+                    <input class="form-control" id="cusId"  type="text">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-bold" for="itemQty">Item Qty</label>
+                    <input class="form-control" id="itemQty" type="text">
+                </div>
+
+                <div class="row">
+                    <div class="mb-2 col">
+                        <label class="form-label fw-bold" for="grossAmount">Gross Amount</label>
+                        <input class="form-control" id="grossAmount"  type="text">
+                    </div>
+                    <div class="mb-2 col">
+                        <label class="form-label fw-bold" for="netAmount">Net Amount</label>
+                        <input class="form-control" id="netAmount"  type="text">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!--order detail table-->
+        <section class="row mt-4">
+            <div class="col">
+                <table class="table" id="tblOrderDetail">
+                    <thead class="text-white" style="background-color: #a29bfe;">
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Kind</th>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit Price</th>
+                        <th scope="col">Discount</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody style="background-color: white">
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </section>
+
+</main>
+
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/jquery/jquery-3.6.0.min.js"></script>
+<script src="db/DB.js"></script>
+<script src="db/ItemDB.js"></script>
+<script src="db/OrderDB.js"></script>
+<script src="db/OrderDetails.js"></script>
+<script src="controller/DashBoardController.js"></script>
+<script src="controller/Home.js"></script>
+<script src="controller/CustomerController.js"></script>
+<script src="controller/ItemController.js"></script>
+<script src="controller/OrderController.js"></script>
+<script src="controller/OrderDetailsController.js"></script>
+<script src="model/CustomerDTO.js"></script>
+<script src="model/ItemDTO.js"></script>
+<script src="model/OrderDTO.js"></script>
+<script src="model/OrderDetailsDTO.js"></script>
+
+</body>
+</html>
