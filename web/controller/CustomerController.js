@@ -343,7 +343,7 @@ function searchIfCustomerAlreadyExists(){
         },
         error:function (ob, statusText, error) {
             search = false;
-            alert(statusText+" "+"No Such Customer");
+            alert("No Such Customer");
             loadAllCustomer();
         }
     });
@@ -441,7 +441,7 @@ $("#btnSearchCustomer").click(function () {
             $("#email").val(response.email);
         },
         error:function (ob, statusText, error) {
-            alert(statusText+ " " +"No Such Customer");
+            alert("No Such Customer");
             loadAllCustomer();
         }
     });

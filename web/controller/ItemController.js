@@ -1,23 +1,3 @@
-function loadItemDetails() {
-    $.ajax({
-        url:"item?option=GETALL",
-        method:"GET",
-        success:function (response) {
-
-            $("#tblItem tbody").empty();
-            for (var responseKey of response) {
-                let raw = `<tr><td> ${responseKey.getItemCode()} </td><td> ${responseKey.getKind()} </td><td> ${responseKey.getItemName()} </td><td> ${responseKey.getQtyOnHand()} </td><td> ${responseKey.getUnitPrice()} </td></tr>`;
-                $("#tblItem tbody").append(raw);
-            }
-            clear();
-            clickEvent()
-        },
-        error:function (ob, statusText, error) {
-            alert(statusText);
-        }
-    });
-}
-
 var regExItemID=/^(I00-)[0-9]{3,4}$/;
 var regExKind=/^[A-Z|a-z\s]{3,20}$/;
 var regExItemName=/^[A-Z|a-z\s]{3,20}$/;
@@ -184,6 +164,26 @@ function addItemToDB(itemObject) {
     });
 }
 
+function loadItemDetails() {
+    $.ajax({
+        url:"item?option=GETALL",
+        method:"GET",
+        success:function (response) {
+
+            $("#tblItem tbody").empty();
+            for (var responseKey of response) {
+                let raw = `<tr><td> ${responseKey.code} </td><td> ${responseKey.kind} </td><td> ${responseKey.itemName} </td><td> ${responseKey.qtyOnHand} </td><td> ${responseKey.unitPrice} </td></tr>`;
+                $("#tblItem tbody").append(raw);
+            }
+            clear();
+            clickEvent()
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText);
+        }
+    });
+}
+
 function clear(){
     $("#itemCode").val("");
     $("#kind").val("");
@@ -264,29 +264,50 @@ $("#btnDeleteItem").click(function () {
         let text = "Are you sure you want to delete this Item?";
         if (confirm(text) == true) {
             tblItemRow.remove();
-
-            var index=-1;
-            var code=$("#itemCode").val();
-            var trim=$.trim(code);
-
-            for (var i = 0; i < itemDB.length; i++) {
-                if (trim == itemDB[i].getItemCode()){
-                    index=i;
-                }
-            }
-            itemDB.splice(index,1);
-
-            $("#itemCode").val("");
-            $("#kind").val("");
-            $("#nameOfItem").val("");
-            $("#qty").val("");
-            $("#unitPrice").val("");
+            deleteItem();
         } else {
 
         }
     }
 
 });
+
+function deleteItem(){
+    searchIfItemAlreadyExists();
+    $.ajax({
+        url:"item?itemCode="+$("#itemCode").val(),
+        method:"DELETE",
+        success:function (resp) {
+            if (search == true){
+                alert($("#itemCode").val() + " " +"Item Successfully Deleted.");
+                loadItemDetails();
+            }
+        },
+        error:function (ob,statusText,error) {
+            alert(statusText);
+            loadItemDetails();
+        }
+    });
+}
+
+var search = false;
+
+function searchIfItemAlreadyExists(){
+    $.ajax({
+        url:"item?option=SEARCH&itemCode="+$("#itemCode").val(),
+        method:"GET",
+        success:function (response) {
+            if (response.code ==$("#itemCode").val()){
+                search = true;
+            }
+        },
+        error:function (ob, statusText, error) {
+            search = false;
+            alert("No Such Item");
+            loadItemDetails();
+        }
+    });
+}
 
 $("#btnEditItem").click(function () {
 
@@ -356,7 +377,7 @@ $("#btnSearchItem").click(function () {
             $("#unitPrice").val(response.unitPrice);
         },
         error:function (ob, statusText, error) {
-            alert(statusText+ " " +"No Such Item");
+            alert("No Such Item");
             loadItemDetails();
         }
     });

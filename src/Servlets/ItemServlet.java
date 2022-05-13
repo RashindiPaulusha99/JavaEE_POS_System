@@ -35,7 +35,7 @@ public class ItemServlet extends HttpServlet {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                         objectBuilder.add("code",resultSet.getString(1));
                         objectBuilder.add("kind",resultSet.getString(2));
-                        objectBuilder.add("ItemName",resultSet.getString(3));
+                        objectBuilder.add("itemName",resultSet.getString(3));
                         objectBuilder.add("qtyOnHand",resultSet.getString(4));
                         objectBuilder.add("unitPrice",resultSet.getString(5));
 
@@ -55,7 +55,7 @@ public class ItemServlet extends HttpServlet {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                         objectBuilder.add("code",rst.getString(1));
                         objectBuilder.add("kind",rst.getString(2));
-                        objectBuilder.add("ItemName",rst.getString(3));
+                        objectBuilder.add("itemName",rst.getString(3));
                         objectBuilder.add("qtyOnHand",rst.getString(4));
                         objectBuilder.add("unitPrice",rst.getString(5));
                         arrayBuilder.add(objectBuilder.build());
