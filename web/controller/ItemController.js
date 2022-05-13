@@ -147,54 +147,7 @@ $("#unitPrice").keyup(function (event) {
         $("#errorPrice").text("Unit Price is a required field: Pattern 00.00");
     }
 
-    $("#tblItem tbody > tr").click(function () {
-
-        tblItemRow=$(this);
-
-        var code=tblItemRow.children(':nth-child(1)').text();
-        var trim1 = $.trim(code);
-        var kind=tblItemRow.children(':nth-child(2)').text();
-        var trim2 = $.trim(kind);
-        var iName=tblItemRow.children(':nth-child(3)').text();
-        var trim3 = $.trim(iName);
-        var qty=tblItemRow.children(':nth-child(4)').text();
-        var trim4 = $.trim(qty);
-        var price=tblItemRow.children(':nth-child(5)').text();
-        var trim5 = $.trim(price);
-
-        $("#itemCode").val(trim1);
-        $("#kind").val(trim2);
-        $("#nameOfItem").val(trim3);
-        $("#qty").val(trim4);
-        $("#unitPrice").val(trim5);
-    });
-
-    $("#tblItem tbody > tr").dblclick(function () {
-
-        let text = "Are you sure you want to delete this Item?";
-        if (confirm(text) == true) {
-            tblItemRow.remove();
-
-            var index=-1;
-            var code=$("#itemCode").val();
-            var trim=$.trim(code);
-
-            for (var i = 0; i < itemDB.length; i++) {
-                if (trim == itemDB[i].getItemCode()){
-                    index=i;
-                }
-            }
-            itemDB.splice(index,1);
-
-            $("#itemCode").val("");
-            $("#kind").val("");
-            $("#nameOfItem").val("");
-            $("#qty").val("");
-            $("#unitPrice").val("");
-        } else {
-
-        }
-    });
+    clickEvent();
 });
 
 $('#itemCode,#kind,#nameOfItem,#qty,#unitPrice').keydown(function (e) {
@@ -274,6 +227,24 @@ $("#btnSaveItem").click(function () {
         }
     }
 
+});
+
+function clear(){
+    $("#itemCode").val("");
+    $("#kind").val("");
+    $("#nameOfItem").val("");
+    $("#qty").val("");
+    $("#unitPrice").val("");
+    $("#searchItem").val("");
+
+    $("#itemCode").css('border', '2px solid transparent');
+    $("#kind").css('border', '2px solid transparent');
+    $("#nameOfItem").css('border', '2px solid transparent');
+    $("#qty").css('border', '2px solid transparent');
+    $("#unitPrice").css('border', '2px solid transparent');
+}
+
+function clickEvent(){
     $("#tblItem tbody > tr").click(function () {
 
         tblItemRow=$(this);
@@ -322,22 +293,10 @@ $("#btnSaveItem").click(function () {
 
         }
     });
-
-});
+}
 
 $("#btnClearItem").click(function () {
-    $("#itemCode").val("");
-    $("#kind").val("");
-    $("#nameOfItem").val("");
-    $("#qty").val("");
-    $("#unitPrice").val("");
-    $("#searchItem").val("");
-
-    $("#itemCode").css('border', '2px solid transparent');
-    $("#kind").css('border', '2px solid transparent');
-    $("#nameOfItem").css('border', '2px solid transparent');
-    $("#qty").css('border', '2px solid transparent');
-    $("#unitPrice").css('border', '2px solid transparent');
+    clear();
 });
 
 $("#btnDeleteItem").click(function () {
@@ -442,4 +401,8 @@ $("#btnSearchItem").click(function () {
             alert("No Such Item");
         }
     }
+});
+
+$("#btnViewItem").click(function () {
+
 });
