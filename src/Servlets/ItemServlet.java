@@ -83,20 +83,18 @@ public class ItemServlet extends HttpServlet {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES(?,?,?,?,?,?,?)");
-            pstm.setObject(1,jsonObject.getString("id"));
-            pstm.setObject(2,jsonObject.getString("name"));
-            pstm.setObject(3,jsonObject.getString("gender"));
-            pstm.setObject(4,jsonObject.getString("contact"));
-            pstm.setObject(5,jsonObject.getString("nic"));
-            pstm.setObject(6,jsonObject.getString("address"));
-            pstm.setObject(7,jsonObject.getString("email"));
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO Item VALUES(?,?,?,?,?)");
+            pstm.setObject(1,jsonObject.getString("code"));
+            pstm.setObject(2,jsonObject.getString("kind"));
+            pstm.setObject(3,jsonObject.getString("itemName"));
+            pstm.setObject(4,jsonObject.getString("qtyOnHand"));
+            pstm.setObject(5,jsonObject.getString("unitPrice"));
 
             if (pstm.executeUpdate()>0) {
 
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("message", "Customer Successfully Added.");
+                objectBuilder.add("message", "Item Successfully Added.");
                 objectBuilder.add("status", resp.getStatus());
                 writer.print(objectBuilder.build());
 
@@ -121,25 +119,25 @@ public class ItemServlet extends HttpServlet {
         resp.setContentType("application/jason");
         PrintWriter writer = resp.getWriter();
 
-        String cusId = req.getParameter("cusId");
+        String itemCode = req.getParameter("itemCode");
 
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
 
-            if (connection.prepareStatement("DELETE FROM Customer WHERE customerId='"+ cusId +"'").executeUpdate()>0) {
+            if (connection.prepareStatement("DELETE FROM Item WHERE itemCode='"+ itemCode +"'").executeUpdate()>0) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
-                objectBuilder.add("message","Customer Successfully Deleted.");
+                objectBuilder.add("message","Item Successfully Deleted.");
                 objectBuilder.add("status",resp.getStatus());
                 writer.print(objectBuilder.build());
 
             }else {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("message","Wrong Id Inserted.");
+                objectBuilder.add("message","Wrong Code Inserted.");
                 objectBuilder.add("status",400);
                 writer.print(objectBuilder.build());
 
@@ -171,19 +169,17 @@ public class ItemServlet extends HttpServlet {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
-            PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET customerName=?,Gender=?,contact=?,NIC=?,address=?,email=? WHERE customerId=?");
-            pstm.setObject(1,jsonObject.getString("name"));
-            pstm.setObject(2,jsonObject.getString("gender"));
-            pstm.setObject(3,jsonObject.getString("contact"));
-            pstm.setObject(4,jsonObject.getString("nic"));
-            pstm.setObject(5,jsonObject.getString("address"));
-            pstm.setObject(6,jsonObject.getString("email"));
-            pstm.setObject(7,jsonObject.getString("id"));
+            PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET kind=?,itemName=?,qtyOnHand=?,unitPrice=? WHERE itemCode=?");
+            pstm.setObject(1,jsonObject.getString("kind"));
+            pstm.setObject(2,jsonObject.getString("itemName"));
+            pstm.setObject(3,jsonObject.getString("qtyOnHand"));
+            pstm.setObject(4,jsonObject.getString("unitPrice"));
+            pstm.setObject(5,jsonObject.getString("code"));
 
             if (pstm.executeUpdate()>0) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("message","Customer Successfully Updated.");
+                objectBuilder.add("message","Item Successfully Updated.");
                 objectBuilder.add("status",resp.getStatus());
                 writer.print(objectBuilder.build());
 
