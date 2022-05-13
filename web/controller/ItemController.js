@@ -1,10 +1,21 @@
 function loadItemDetails() {
-    $("#tblItem tbody").empty();
+    $.ajax({
+        url:"item?option=GETALL",
+        method:"GET",
+        success:function (response) {
 
-    for (var i = 0; i < itemDB.length; i++) {
-        let raw = `<tr><td> ${itemDB[i].getItemCode()} </td><td> ${itemDB[i].getKind()} </td><td> ${itemDB[i].getItemName()} </td><td> ${itemDB[i].getQtyOnHand()} </td><td> ${itemDB[i].getUnitPrice()} </td></tr>`;
-        $("#tblItem tbody").append(raw);
-    }
+            $("#tblItem tbody").empty();
+            for (var responseKey of response) {
+                let raw = `<tr><td> ${responseKey.getItemCode()} </td><td> ${responseKey.getKind()} </td><td> ${responseKey.getItemName()} </td><td> ${responseKey.getQtyOnHand()} </td><td> ${responseKey.getUnitPrice()} </td></tr>`;
+                $("#tblItem tbody").append(raw);
+            }
+            clear();
+            clickEvent()
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText);
+        }
+    });
 }
 
 var regExItemID=/^(I00-)[0-9]{3,4}$/;
@@ -84,70 +95,12 @@ $("#unitPrice").keyup(function (event) {
         $("#errorPrice").text("");
 
         if (event.key=="Enter"){
-
-            let text = "Do you really want to save this Item?";
-            if (confirm(text) == true) {
-                let itemCode = $("#itemCode").val();
-                let kind = $("#kind").val();
-                let itemName = $("#nameOfItem").val();
-                let qty = $("#qty").val();
-                let unitPrice = $("#unitPrice").val();
-
-                var itemDetails = new ItemDTO(
-                    itemCode,
-                    kind,
-                    itemName,
-                    qty,
-                    unitPrice
-                );
-
-                var ifDuplicate=false;
-
-                var code=$("#itemCode").val();
-                var trim = $.trim(code);
-
-                for (var j = 0; j < itemDB.length; j++) {
-                    if (trim == itemDB[j].getItemCode()){
-                        ifDuplicate = true;
-                    }else {
-                        ifDuplicate = false;
-                    }
-                }
-
-                if (ifDuplicate == false){
-                    itemDB.push(itemDetails);
-                    $("#tblItem tbody").empty();
-
-                    for (var i = 0; i < itemDB.length; i++) {
-                        let raw = `<tr><td> ${itemDB[i].getItemCode()} </td><td> ${itemDB[i].getKind()} </td><td> ${itemDB[i].getItemName()} </td><td> ${itemDB[i].getQtyOnHand()} </td><td> ${itemDB[i].getUnitPrice()} </td></tr>`;
-                        $("#tblItem tbody").append(raw);
-                    }
-
-                    $("#itemCode").val("");
-                    $("#kind").val("");
-                    $("#nameOfItem").val("");
-                    $("#qty").val("");
-                    $("#unitPrice").val("");
-
-                    $("#itemCode").css('border', '2px solid transparent');
-                    $("#kind").css('border', '2px solid transparent');
-                    $("#nameOfItem").css('border', '2px solid transparent');
-                    $("#qty").css('border', '2px solid transparent');
-                    $("#unitPrice").css('border', '2px solid transparent');
-                }else {
-                    alert("Already Exists");
-                }
-
-            } else {
-
-            }
+            saveItem();
         }
     }else {
         $("#unitPrice").css('border','2px solid red');
         $("#errorPrice").text("Unit Price is a required field: Pattern 00.00");
     }
-
-    clickEvent();
 });
 
 $('#itemCode,#kind,#nameOfItem,#qty,#unitPrice').keydown(function (e) {
@@ -167,67 +120,69 @@ $("#btnSaveItem").click(function () {
         $("#itemCode").val()==""||$("#nameOfItem").val()==""||$("#kind").val()==""||$("#qty").val()==""||$("#unitPrice").val()==""){
         $("#btnSaveItem").disable();
     }else {
-
-        let text = "Do you really want to save this Item?";
-
-        if (confirm(text) == true) {
-            let itemCode = $("#itemCode").val();
-            let kind = $("#kind").val();
-            let itemName = $("#nameOfItem").val();
-            let qty = $("#qty").val();
-            let unitPrice = $("#unitPrice").val();
-
-            var itemDetails = new ItemDTO(
-                itemCode,
-                kind,
-                itemName,
-                qty,
-                unitPrice
-            );
-
-            var ifDuplicate=false;
-
-            var code=$("#itemCode").val();
-            var trim = $.trim(code);
-
-            for (var j = 0; j < itemDB.length; j++) {
-                if (trim == itemDB[j].getItemCode()){
-                    ifDuplicate = true;
-                }else {
-                    ifDuplicate = false;
-                }
-            }
-
-            if (ifDuplicate == false){
-                itemDB.push(itemDetails);
-                $("#tblItem tbody").empty();
-
-                for (var i = 0; i < itemDB.length; i++) {
-                    let raw = `<tr><td> ${itemDB[i].getItemCode()} </td><td> ${itemDB[i].getKind()} </td><td> ${itemDB[i].getItemName()} </td><td> ${itemDB[i].getQtyOnHand()} </td><td> ${itemDB[i].getUnitPrice()} </td></tr>`;
-                    $("#tblItem tbody").append(raw);
-                }
-
-                $("#itemCode").val("");
-                $("#kind").val("");
-                $("#nameOfItem").val("");
-                $("#qty").val("");
-                $("#unitPrice").val("");
-
-                $("#itemCode").css('border', '2px solid transparent');
-                $("#kind").css('border', '2px solid transparent');
-                $("#nameOfItem").css('border', '2px solid transparent');
-                $("#qty").css('border', '2px solid transparent');
-                $("#unitPrice").css('border', '2px solid transparent');
-            }else {
-                alert("Already Exists");
-            }
-
-        } else {
-
-        }
+        saveItem();
     }
 
 });
+
+function saveItem() {
+
+    let text = "Do you really want to save this Item?";
+
+    if (confirm(text) == true) {
+        let itemCode = $("#itemCode").val();
+        let kind = $("#kind").val();
+        let itemName = $("#nameOfItem").val();
+        let qty = $("#qty").val();
+        let unitPrice = $("#unitPrice").val();
+
+        var itemDetails = new ItemDTO(
+            itemCode,
+            kind,
+            itemName,
+            qty,
+            unitPrice
+        );
+
+        addItemToDB(itemDetails);
+
+    } else {
+
+    }
+}
+
+function addItemToDB(itemObject) {
+    var itemDetails={
+        code:itemObject.getItemCode(),
+        kind:itemObject.getKind(),
+        itemName:itemObject.getItemName(),
+        qtyOnHand:itemObject.getQtyOnHand(),
+        unitPrice:itemObject.getUnitPrice()
+    }
+
+    $.ajax({
+        url:"item",
+        method:"POST",
+        contentType:"application/json",
+        data: JSON.stringify(itemDetails),
+        success:function (response) {
+            if (response.status == 200){
+                if (response.message == "Item Successfully Added."){
+                    alert($("#itemCode").val() + " " + response.message);
+                }else if (response.message == "Error"){
+                    alert(response.data + " " + "Already Exists.");
+                }
+            }else if (response.status == "400"){
+                alert(response.data);
+            }
+            loadItemDetails();
+        },
+        error:function (ob , statusText , error) {
+            alert(statusText);
+            loadItemDetails();
+        }
+    });
+}
 
 function clear(){
     $("#itemCode").val("");
@@ -390,19 +345,23 @@ $("#btnEditItem").click(function () {
 });
 
 $("#btnSearchItem").click(function () {
-    for (var i = 0; i < itemDB.length; i++) {
-        if ($("#searchItem").val()==itemDB[i].getItemCode()){
-            $("#itemCode").val(itemDB[i].getItemCode());
-            $("#nameOfItem").val(itemDB[i].getItemName());
-            $("#kind").val(itemDB[i].getKind());
-            $("#qty").val(itemDB[i].getQtyOnHand());
-            $("#unitPrice").val(itemDB[i].getUnitPrice());
-        }else {
-            alert("No Such Item");
+    $.ajax({
+        url:"item?option=SEARCH&itemCode="+$("#searchItem").val(),
+        method:"GET",
+        success:function (response) {
+            $("#itemCode").val(response.code);
+            $("#nameOfItem").val(response.itemName);
+            $("#kind").val(response.kind);
+            $("#qty").val(response.qtyOnHand);
+            $("#unitPrice").val(response.unitPrice);
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText+ " " +"No Such Item");
+            loadItemDetails();
         }
-    }
+    });
 });
 
 $("#btnViewItem").click(function () {
-
+    loadItemDetails();
 });
