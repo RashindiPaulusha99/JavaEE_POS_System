@@ -227,23 +227,7 @@ function clickEvent(){
         let text = "Are you sure you want to delete this Item?";
         if (confirm(text) == true) {
             tblItemRow.remove();
-
-            var index=-1;
-            var code=$("#itemCode").val();
-            var trim=$.trim(code);
-
-            for (var i = 0; i < itemDB.length; i++) {
-                if (trim == itemDB[i].getItemCode()){
-                    index=i;
-                }
-            }
-            itemDB.splice(index,1);
-
-            $("#itemCode").val("");
-            $("#kind").val("");
-            $("#nameOfItem").val("");
-            $("#qty").val("");
-            $("#unitPrice").val("");
+            deleteItem();
         } else {
 
         }
@@ -325,45 +309,60 @@ $("#btnEditItem").click(function () {
             let qty = $("#qty").val();
             let unitPrice = $("#unitPrice").val();
 
+            var itemDetails = new ItemDTO(
+                itemCode,
+                kind,
+                itemName,
+                qty,
+                unitPrice
+            );
+
             $(tblItemRow).children(':nth-child(1)').text(itemCode);
             $(tblItemRow).children(':nth-child(2)').text(kind);
             $(tblItemRow).children(':nth-child(3)').text(itemName);
             $(tblItemRow).children(':nth-child(4)').text(qty);
             $(tblItemRow).children(':nth-child(5)').text(unitPrice);
-
-            var count=-1;
-            for (var i = 0; i < itemDB.length; i++) {
-
-                var code=$("#itemCode").val();
-                var trim=$.trim(code);
-
-                if (trim == itemDB[i].getItemCode()){
-                    itemDB[i].setItemCode(itemCode);
-                    itemDB[i].setKind(kind);
-                    itemDB[i].setItemName(itemName);
-                    itemDB[i].setQtyOnHand(qty);
-                    itemDB[i].setUnitPrice(unitPrice);
-                }
-            }
-
-            $("#itemCode").val("");
-            $("#kind").val("");
-            $("#nameOfItem").val("");
-            $("#qty").val("");
-            $("#unitPrice").val("");
-
-            $("#itemCode").css('border', '2px solid transparent');
-            $("#kind").css('border', '2px solid transparent');
-            $("#nameOfItem").css('border', '2px solid transparent');
-            $("#qty").css('border', '2px solid transparent');
-            $("#unitPrice").css('border', '2px solid transparent');
-
+            
+            updateItem(itemDetails);
+            
         } else {
 
         }
     }
 
 });
+
+function updateItem(itemObject){
+    var itemDetails={
+        code:itemObject.getItemCode(),
+        kind:itemObject.getKind(),
+        itemName:itemObject.getItemName(),
+        qtyOnHand:itemObject.getQtyOnHand(),
+        unitPrice:itemObject.getUnitPrice()
+    }
+
+    $.ajax({
+        url:"item",
+        method:"PUT",
+        contentType: "application/json",
+        data: JSON.stringify(itemDetails),
+        success:function (response) {
+            console.log(response);
+            if (response.status == 200){
+                alert($("#itemCode").val() + " " + response.message);
+            }else if (response.status == 400){
+                alert(response.message);
+            }else {
+                alert(response.data);
+            }
+            loadItemDetails();
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText);
+            loadItemDetails();
+        }
+    });
+}
 
 $("#btnSearchItem").click(function () {
     $.ajax({
