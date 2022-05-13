@@ -253,28 +253,21 @@ function clickEvent(){
 
         tblCustomerRow=$(this);
 
-        var id=tblCustomerRow.children(':nth-child(1)').text();
-        var trim1 = $.trim(id);
-        var name=tblCustomerRow.children(':nth-child(2)').text();
-        var trim2 = $.trim(name);
-        var gender=tblCustomerRow.children(':nth-child(3)').text();
-        var trim3 = $.trim(gender);
-        var contact=tblCustomerRow.children(':nth-child(4)').text();
-        var trim4 = $.trim(contact);
-        var nic=tblCustomerRow.children(':nth-child(5)').text();
-        var trim5 = $.trim(nic);
-        var address=tblCustomerRow.children(':nth-child(6)').text();
-        var trim6 = $.trim(address);
-        var email=tblCustomerRow.children(':nth-child(7)').text();
-        var trim7 = $.trim(email);
+        var id = $.trim(tblCustomerRow.children(':nth-child(1)').text());
+        var name = $.trim(tblCustomerRow.children(':nth-child(2)').text());
+        var gender = $.trim(tblCustomerRow.children(':nth-child(3)').text());
+        var contact = $.trim(tblCustomerRow.children(':nth-child(4)').text());
+        var nic = $.trim(tblCustomerRow.children(':nth-child(5)').text());
+        var address = $.trim(tblCustomerRow.children(':nth-child(6)').text());
+        var email = $.trim(tblCustomerRow.children(':nth-child(7)').text());
 
-        $("#customerId").val(trim1);
-        $("#nameOfCustomer").val(trim2);
-        $("#gender").val(trim3);
-        $("#contact").val(trim4);
-        $("#nic").val(trim5);
-        $("#address").val(trim6);
-        $("#email").val(trim7);
+        $("#customerId").val(id);
+        $("#nameOfCustomer").val(name);
+        $("#gender").val(gender);
+        $("#contact").val(contact);
+        $("#nic").val(nic);
+        $("#address").val(address);
+        $("#email").val(email);
 
     });
 

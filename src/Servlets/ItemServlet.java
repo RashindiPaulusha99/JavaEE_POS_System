@@ -64,6 +64,15 @@ public class ItemServlet extends HttpServlet {
                     writer.write(String.valueOf(arrayBuilder.build()));
 
                     break;
+
+                case "COUNT":
+
+                    ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM Item").executeQuery();
+                    while (rsts.next()){
+                        writer.print(rsts.getInt(1));
+                    }
+
+                    break;
             }
 
         } catch (SQLException | ClassNotFoundException throwables) {

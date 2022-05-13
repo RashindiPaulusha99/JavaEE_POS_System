@@ -175,8 +175,8 @@ function loadItemDetails() {
                 let raw = `<tr><td> ${responseKey.code} </td><td> ${responseKey.kind} </td><td> ${responseKey.itemName} </td><td> ${responseKey.qtyOnHand} </td><td> ${responseKey.unitPrice} </td></tr>`;
                 $("#tblItem tbody").append(raw);
             }
-            clear();
-            clickEvent()
+            clearItems();
+            clickEventForItem();
         },
         error:function (ob, statusText, error) {
             alert(statusText);
@@ -184,7 +184,7 @@ function loadItemDetails() {
     });
 }
 
-function clear(){
+function clearItems(){
     $("#itemCode").val("");
     $("#kind").val("");
     $("#nameOfItem").val("");
@@ -199,7 +199,7 @@ function clear(){
     $("#unitPrice").css('border', '2px solid transparent');
 }
 
-function clickEvent(){
+function clickEventForItem(){
     $("#tblItem tbody > tr").click(function () {
 
         tblItemRow=$(this);
@@ -235,7 +235,7 @@ function clickEvent(){
 }
 
 $("#btnClearItem").click(function () {
-    clear();
+    clearItems();
 });
 
 $("#btnDeleteItem").click(function () {

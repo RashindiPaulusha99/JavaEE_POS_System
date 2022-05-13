@@ -7,6 +7,38 @@ $("#orderSec").css('display','none');
 $("#orderDetailName").css('display','none');
 $("#orderDetailSec").css('display','none');
 
+counting();
+function counting() {
+    countCustomers();
+    countItems();
+}
+
+function countCustomers() {
+    $.ajax({
+        url:"customer?option=COUNT",
+        method:"GET",
+        success:function (response) {
+            $("#customerCount").text(response);
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText);
+        }
+    });
+}
+
+function countItems() {
+    $.ajax({
+        url:"item?option=COUNT",
+        method:"GET",
+        success:function (response) {
+            $("#itemCount").text(response);
+        },
+        error:function (ob, statusText, error) {
+            alert(statusText);
+        }
+    });
+}
+
 $("#customer").click(function () {
     $("#customerName").css('display','block');
     $("#customerSec").css('display','block');
@@ -50,7 +82,7 @@ $("#home").click(function () {
     $("#orderDetailName").css('display','none');
     $("#orderDetailSec").css('display','none');
 
-    Count();
+    counting();
 });
 
 $("#order").click(function () {
