@@ -341,12 +341,15 @@ function updateItem(itemObject){
         unitPrice:itemObject.getUnitPrice()
     }
 
+    console.log(itemDetails);
+
     $.ajax({
         url:"item",
         method:"PUT",
         contentType: "application/json",
         data: JSON.stringify(itemDetails),
         success:function (response) {
+            console.log(response);
             if (response.status == 200){
                 alert($("#itemCode").val() + " " + response.message);
             }else if (response.status == 400){

@@ -82,46 +82,63 @@ $("#btnNew").click(function () {
 });
 
 $("#btnSearchOrder").click(function () {
-    var trimid=$.trim($("#searchOrder").val());
     $("#tblOrder tbody tr").empty();
 
-    var ifExists = false;
-    for (var i = 0; i <orderDB.length ; i++) {
-        if (trimid == orderDB[i].getOrderId()){
-            ifExists = true;
-        }
-    }
+    searchOrder();
+    searchOrderDetails();
+});
 
-    if (ifExists == true){
-        for (var i = 0; i < orderDB.length; i++) {
-            if (trimid == orderDB[i].getOrderId()){
-                $("#orderCusId").val(orderDB[i].getOrderCusId());
-                $("#orderId").val(trimid);
-                $("#orderDate").val(orderDB[i].getOrderDate());
-                $("#net").val(orderDB[i].getNetTotal());
-                $("#gross").val(orderDB[i].getGrossTotal());
-            }
-        }
+function searchOrder() {
+    $.ajax({
+        url:"order?option=SEARCH&orderId="+$.trim($("#searchOrder").val()),
+        method:"GET",
+        success:function (response) {
+            $("#orderCusId").val(response.cusId);
+            $("#orderId").val(response.orderId);
+            $("#orderDate").val(response.orderDate);
+            $("#net").val(response.grossTotal);
+            $("#gross").val(response.netTotal);
 
-        for (var i = 0; i < customerDB.length; i++) {
-            if ($("#orderCusId").val() == customerDB[i].getCustomerId()){
-                $("#orderCusName").val(customerDB[i].getCustomerName());
-                $("#orderCusNIC").val(customerDB[i].getNIC());
-                $("#orderCusContact").val(customerDB[i].getContact());
-                $("#orderCusAddress").val(customerDB[i].getAddress());
-            }
+            searchCustomerDetail(response.cusId);
+        },
+        error:function (ob, statusText, error) {
+            alert("No Such Order");
         }
+    });
+}
 
-        for (var i = 0; i < orderDetailsDB.length; i++) {
-            if (trimid == orderDetailsDB[i].getOrderDetailId()){
-                let raw = `<tr><td> ${orderDetailsDB[i].getOrderItemCode()} </td><td> ${orderDetailsDB[i].getOrderItemKind()} </td><td> ${orderDetailsDB[i].getOrderItemName()} </td><td> ${orderDetailsDB[i].getSellQty()} </td><td> ${orderDetailsDB[i].getOrderUnitPrice()} </td><td> ${orderDetailsDB[i].getDiscount()} </td><td> ${orderDetailsDB[i].getTotal()} </td><td> <input id='btnEdit' class='btn btn-success btn-sm' value='Update' style="width: 75px"/> </td><td> <input id='btnDelete' class='btn btn-danger btn-sm' value='Delete' style="width: 75px"/> </td></tr>`;
+function searchCustomerDetail(cusId) {
+    $.ajax({
+        url:"customer?option=SEARCH&cusId="+cusId,
+        method:"GET",
+        success:function (response) {
+            $("#orderCusId").val(response.id);
+            $("#orderCusName").val(response.name);
+            $("#orderCusAddress").val(response.address);
+            $("#orderCusContact").val(response.contact);
+            $("#orderCusNIC").val(response.nic);
+        },
+        error:function (ob, statusText, error) {
+            //alert("No Such Customer");
+        }
+    });
+}
+
+function searchOrderDetails() {
+    $.ajax({
+        url:"orderDetail?option=SEARCH&orderId="+$.trim($("#searchOrder").val()),
+        method:"GET",
+        success:function (response) {
+            for (var oDetails of response) {
+                let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td><td> <input id='btnEdit' class='btn btn-success btn-sm' value='Update' style="width: 75px"/> </td><td> <input id='btnDelete' class='btn btn-danger btn-sm' value='Delete' style="width: 75px"/> </td></tr>`;
                 $("#tblOrder tbody").append(raw);
             }
+        },
+        error:function (ob, statusText, error) {
+            //alert("No Such Order");
         }
-    }else if (ifExists == false){
-        alert("No Such Order");
-    }
-});
+    });
+}
 
 function ifRefusePurchase(code,qty) {
     var addQty = parseInt(qty);
@@ -263,29 +280,42 @@ console.log("manageQty");
         $("#orderPrice").val()
     );
 
-    updateQty(itemDetails);
+    updateItem(itemDetails);
 }
 
 /* if add new row , qtyOnHand changes */
 function manageAddQty(qty){
-
+    console.log("manageAddQty");
     var qtyOnHand = parseInt($("#orderQty").val());
     qtyOnHand-=parseInt(qty);
 
-    var itemDetails = new ItemDTO(
+    /*var itemDetails = new ItemDTO(
         $("#orderItemCode").val(),
         $("#orderKind").val(),
         $("#orderItemName").val(),
         qtyOnHand,
         $("#orderPrice").val()
+    );*/
+
+    let itemCode = $("#orderItemCode").val();
+    let kind = $("#orderKind").val();
+    let itemName = $("#orderItemName").val();
+    let unitPrice = $("#orderPrice").val();
+
+    var itemDetails = new ItemDTO(
+        itemCode,
+        kind,
+        itemName,
+        qtyOnHand,
+        unitPrice
     );
 
-    updateQty(itemDetails);
+    updateItem(itemDetails);
 }
 
 /* if delete a row , qtyOnHand changes */
 function manageReduceQty(qty){
-
+    console.log("manageReduceQty");
     var qtyOnHand = parseInt($("#orderQty").val());
     qtyOnHand+=parseInt(qty);
 
@@ -297,7 +327,7 @@ function manageReduceQty(qty){
         $("#orderPrice").val()
     );
 
-    updateQty(itemDetails);
+    updateItem(itemDetails);
 }
 
 function updateQty(itemObject) {
