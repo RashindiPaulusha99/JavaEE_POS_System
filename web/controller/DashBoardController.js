@@ -7,8 +7,8 @@ $("#orderSec").css('display','none');
 $("#orderDetailName").css('display','none');
 $("#orderDetailSec").css('display','none');
 
-counting();
-function counting() {
+count();
+function count() {
     countCustomers();
     countItems();
 }
@@ -82,7 +82,7 @@ $("#home").click(function () {
     $("#orderDetailName").css('display','none');
     $("#orderDetailSec").css('display','none');
 
-    counting();
+    count();
 });
 
 $("#order").click(function () {
