@@ -347,7 +347,6 @@ function updateItem(itemObject){
         contentType: "application/json",
         data: JSON.stringify(itemDetails),
         success:function (response) {
-            console.log(response);
             if (response.status == 200){
                 alert($("#itemCode").val() + " " + response.message);
             }else if (response.status == 400){
