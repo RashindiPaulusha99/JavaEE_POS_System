@@ -341,8 +341,6 @@ function updateItem(itemObject){
         unitPrice:itemObject.getUnitPrice()
     }
 
-    console.log(itemDetails);
-
     $.ajax({
         url:"item",
         method:"PUT",
