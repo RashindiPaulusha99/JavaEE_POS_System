@@ -80,6 +80,8 @@ $("#btnNew").click(function () {
     $("#cash").css('border', '2px solid transparent');
 });
 
+/*--------------------------*/
+
 $("#btnSearchOrder").click(function () {
     $("#tblOrder tbody tr").empty();
 
@@ -139,7 +141,7 @@ function searchOrderDetails() {
     });
 }
 
-function ifRefusePurchase(code, qty) {
+/*function ifRefusePurchase(code, qty) {
     var addQty = parseInt(qty);
     for (var j = 0; j < itemDB.length; j++) {
         if (code == itemDB[j].getItemCode()) {
@@ -148,7 +150,7 @@ function ifRefusePurchase(code, qty) {
             itemDB[j].setQtyOnHand(manageQty);
         }
     }
-}
+}*/
 
 /*-------------------Customer Sec-----------------------*/
 
@@ -572,7 +574,6 @@ $("#btnPurchase").click(function () {
         $("#gross").val() == "" || $("#net").val() == "" || $("#cash").val() == "" || $("#discount").val() == "") {
         $("#btnPurchase").disable();
     } else {
-
         let text = "Do you really want to place order?";
 
         if (confirm(text) == true) {
@@ -582,8 +583,6 @@ $("#btnPurchase").click(function () {
             let orderDate = $("#orderDate").val();
             let cusIds = $("#ids option:selected").text();
             let orderId = $("#orderId").val();
-            let cash = $("#cash").val();
-            let discount = $("#discount").val();
 
             var order = new OrderDTO(
                 orderId,
@@ -593,81 +592,124 @@ $("#btnPurchase").click(function () {
                 amountOfNet
             );
 
-            var ifDuplicate = false;
-
-            for (var j = 0; j < orderDB.length; j++) {
-                if (orderId == orderDB[j].getOrderId()) {
-                    ifDuplicate = true;
-                }
-            }
-
-            if (ifDuplicate == false) {
-
-                orderDB.push(order);
-
-                for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-                    var orderDetails = new OrderDetailDTO(
-                        orderId,
-                        $("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
-                        $("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
-                    )
-                    orderDetailsDB.push(orderDetails);
-                }
-
-                var rest = amountOfNet - (amountOfNet * discount / 100);
-                var balance = cash - rest;
-                $("#balance").val(balance);
-
-                $("#btnAddCart").attr('disabled', false);
-
-            } else if (ifDuplicate == true) {
-                alert("Something Wrong.");
-            }
+            searchOrderIdForPurchase(order);
 
         } else if (confirm(text) == false) {
-            alert("error");
-
-            for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-                var code = $("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText;
-                var qty = $("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText;
-                ifRefusePurchase(code, qty);
-            }
 
             generateOrderId();
             netAmount = 0;
             grossAmount = 0;
 
-            $("#orderItemName").val("");
-            $("#orderItemCode").val("");
-            $("#orderKind").val("");
-            $("#orderQty").val("");
-            $("#orderPrice").val("");
-            $("#sellQty").val("");
-            $("#itemDiscount").val("");
-            $("#orderCusName").val("");
-            $("#orderCusId").val("");
-            $("#orderCusAddress").val("");
-            $("#orderCusNIC").val("");
-            $("#orderCusContact").val("");
-            $("#searchOrder").val("");
-            $("#gross").val("");
-            $("#net").val("");
-            $("#cash").val("");
-            $("#discount").val("");
-            $("#balance").val("");
-            $("#tblOrder tbody").empty();
-
-            $("#sellQty").css('border', '2px solid transparent');
-            $("#itemDiscount").css('border', '2px solid transparent');
-            $("#discount").css('border', '2px solid transparent');
-            $("#cash").css('border', '2px solid transparent');
+            clearAll();
 
         }
     }
-
 });
+
+function searchOrderIdForPurchase(orderObject) {
+
+    $.ajax({
+        url: "order?option=SEARCH&orderId=" + orderObject.getOrderId(),
+        method: "GET",
+        success: function (response) {
+            alert("Something Wrong.");
+        },
+        error: function (ob, statusText, error) {
+
+            addDataToOrderDB(orderObject);
+
+            var rest = parseInt($("#net").val()) - (parseInt($("#net").val()) * parseInt($("#discount").val()) / 100);
+            var balance = parseInt($("#cash").val()) - rest;
+            $("#balance").val(balance);
+
+            $("#btnAddCart").attr('disabled', false);
+        }
+    });
+
+}
+
+function addDataToOrderDB(orderObject) {
+    var orderDetail={
+        orderId:orderObject.getOrderId(),
+        cusId:orderObject.getCustomerId(),
+        orderDate:orderObject.getOrderDate(),
+        grossTotal:orderObject.getGrossTotal(),
+        netTotal:orderObject.getNetTotal()
+    }
+
+    $.ajax({
+        url:"order",
+        method:"POST",
+        contentType:"application/json",
+        data: JSON.stringify(orderDetail),
+        success:function (response) {
+            if (response.status == 200){
+                if (response.message == "Successfully Purchased Order."){
+
+                    addDataToOrderDetailDB();
+
+                    alert($("#customerId").val() + " " + response.message);
+
+                }else if (response.message == "Error"){
+                    alert(response.data + " " + "Already Exists.");
+                }
+            }else if (response.status == "400"){
+                alert(response.data);
+            }
+        },
+        error:function (ob , statusText , error) {
+            alert(statusText);
+        }
+    });
+}
+
+function addDataToOrderDetailDB() {
+
+    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
+        var orderDetails = new OrderDetailDTO(
+            $("#orderId").val(),
+            $("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
+            $("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
+        );
+
+        $.ajax({
+            url:"orderDetail",
+            method:"POST",
+            contentType:"application/json",
+            data: JSON.stringify(orderDetails),
+            success:function (response) {
+                console.log("success");
+            },
+            error:function (ob , statusText , error) {
+
+            }
+        });
+
+    }
+}
+
+function clearAll() {
+    clearFieldsWhenAddItem();
+
+    $("#orderCusName").val("");
+    $("#orderCusId").val("");
+    $("#orderCusAddress").val("");
+    $("#orderCusNIC").val("");
+    $("#orderCusContact").val("");
+    $("#searchOrder").val("");
+    $("#gross").val("");
+    $("#net").val("");
+    $("#cash").val("");
+    $("#discount").val("");
+    $("#balance").val("");
+
+    $("#tblOrder tbody").empty();
+
+    $("#discount").css('border', '2px solid transparent');
+    $("#cash").css('border', '2px solid transparent');
+}
