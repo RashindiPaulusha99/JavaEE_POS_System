@@ -1,17 +1,22 @@
 package Servlets;
 
+import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
+
+    @Resource(name = "java:comp/env/jdbc/pool")
+    DataSource dataSource;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,8 +28,7 @@ public class CustomerServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
 
             switch (option){
                 case  "SEARCH":
@@ -88,11 +92,11 @@ public class CustomerServlet extends HttpServlet {
                     }
 
                     break;
-
             }
+            connection.close();
 
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -108,8 +112,8 @@ public class CustomerServlet extends HttpServlet {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
+            Connection connection = dataSource.getConnection();
+
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES(?,?,?,?,?,?,?)");
             pstm.setObject(1,jsonObject.getString("id"));
             pstm.setObject(2,jsonObject.getString("name"));
@@ -128,8 +132,9 @@ public class CustomerServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
 
             }
+            connection.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 
@@ -153,8 +158,7 @@ public class CustomerServlet extends HttpServlet {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
 
             if (connection.prepareStatement("DELETE FROM Customer WHERE customerId='"+ cusId +"'").executeUpdate()>0) {
 
@@ -172,8 +176,9 @@ public class CustomerServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
 
             }
+            connection.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 
@@ -197,9 +202,8 @@ public class CustomerServlet extends HttpServlet {
         JsonObject jsonObject = reader.readObject();
 
         try {
+            Connection connection = dataSource.getConnection();
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
             PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET customerName=?,Gender=?,contact=?,NIC=?,address=?,email=? WHERE customerId=?");
             pstm.setObject(1,jsonObject.getString("name"));
             pstm.setObject(2,jsonObject.getString("gender"));
@@ -223,8 +227,9 @@ public class CustomerServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
 
             }
+            connection.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 

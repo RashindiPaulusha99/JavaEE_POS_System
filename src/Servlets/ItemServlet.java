@@ -1,17 +1,22 @@
 package Servlets;
 
+import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/item")
 public class ItemServlet extends HttpServlet {
+
+    @Resource(name = "java:comp/env/jdbc/pool")
+    DataSource dataSource;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,21 +28,20 @@ public class ItemServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
 
-            switch (option){
-                case  "SEARCH":
+            switch (option) {
+                case "SEARCH":
 
                     ResultSet resultSet = connection.prepareStatement("SELECT * FROM Item WHERE itemCode='" + itemCode + "'").executeQuery();
 
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("code",resultSet.getString(1));
-                        objectBuilder.add("kind",resultSet.getString(2));
-                        objectBuilder.add("itemName",resultSet.getString(3));
-                        objectBuilder.add("qtyOnHand",resultSet.getString(4));
-                        objectBuilder.add("unitPrice",resultSet.getString(5));
+                        objectBuilder.add("code", resultSet.getString(1));
+                        objectBuilder.add("kind", resultSet.getString(2));
+                        objectBuilder.add("itemName", resultSet.getString(3));
+                        objectBuilder.add("qtyOnHand", resultSet.getString(4));
+                        objectBuilder.add("unitPrice", resultSet.getString(5));
 
                         writer.write(String.valueOf(objectBuilder.build()));
 
@@ -51,13 +55,13 @@ public class ItemServlet extends HttpServlet {
 
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                    while (rst.next()){
+                    while (rst.next()) {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("code",rst.getString(1));
-                        objectBuilder.add("kind",rst.getString(2));
-                        objectBuilder.add("itemName",rst.getString(3));
-                        objectBuilder.add("qtyOnHand",rst.getString(4));
-                        objectBuilder.add("unitPrice",rst.getString(5));
+                        objectBuilder.add("code", rst.getString(1));
+                        objectBuilder.add("kind", rst.getString(2));
+                        objectBuilder.add("itemName", rst.getString(3));
+                        objectBuilder.add("qtyOnHand", rst.getString(4));
+                        objectBuilder.add("unitPrice", rst.getString(5));
                         arrayBuilder.add(objectBuilder.build());
 
                     }
@@ -68,7 +72,7 @@ public class ItemServlet extends HttpServlet {
                 case "COUNT":
 
                     ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM Item").executeQuery();
-                    while (rsts.next()){
+                    while (rsts.next()) {
                         writer.print(rsts.getInt(1));
                     }
 
@@ -77,18 +81,18 @@ public class ItemServlet extends HttpServlet {
                 case "GETIDS":
 
                     ResultSet rset = connection.prepareStatement("SELECT itemCode FROM Item ORDER BY itemCode DESC LIMIT 1").executeQuery();
-                    while (rset.next()){
+                    while (rset.next()) {
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("itemCode",rset.getString(1));
+                        objectBuilder.add("itemCode", rset.getString(1));
                         writer.print(objectBuilder.build());
                     }
 
                     break;
-
             }
+            connection.close();
 
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -102,8 +106,8 @@ public class ItemServlet extends HttpServlet {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
+            Connection connection = dataSource.getConnection();
+
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO Item VALUES(?,?,?,?,?)");
             pstm.setObject(1,jsonObject.getString("code"));
             pstm.setObject(2,jsonObject.getString("kind"));
@@ -120,8 +124,9 @@ public class ItemServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
 
             }
+            connection.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 
@@ -143,9 +148,7 @@ public class ItemServlet extends HttpServlet {
         String itemCode = req.getParameter("itemCode");
 
         try {
-
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
 
             if (connection.prepareStatement("DELETE FROM Item WHERE itemCode='"+ itemCode +"'").executeUpdate()>0) {
 
@@ -164,7 +167,7 @@ public class ItemServlet extends HttpServlet {
 
             }
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 
@@ -188,8 +191,8 @@ public class ItemServlet extends HttpServlet {
 
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
+
             PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET kind=?,itemName=?,qtyOnHand=?,unitPrice=? WHERE itemCode=?");
             pstm.setObject(1,jsonObject.getString("kind"));
             pstm.setObject(2,jsonObject.getString("itemName"));
@@ -211,8 +214,9 @@ public class ItemServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
 
             }
+            connection.close();
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 

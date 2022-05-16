@@ -22,7 +22,6 @@ function searchORDER(oid) {
         url: "purchaseOrder?option=SEARCH&orderId=" + oid,
         method: "GET",
         success: function (response) {
-            console.log("search");
             $("#cusId").val(response.cusId);
             $("#OID").val(response.orderId);
             $("#ODate").val(response.orderDate);
@@ -42,7 +41,6 @@ function searchItemQty(oid) {
         url: "purchaseOrder?option=COUNTQTY&orderId=" + oid,
         method: "GET",
         success: function (response) {
-            console.log("search");
             $("#itemQty").val(response);
         },
         error: function (ob, statusText, error) {
@@ -56,7 +54,7 @@ function searchDetailsForOrder(oid) {
         url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + oid,
         method: "GET",
         success: function (response) {
-            console.log(response);
+
             $("#tblOrderDetail tbody").empty()
             for (var oDetails of response) {
                 let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td></tr>`;
@@ -68,7 +66,6 @@ function searchDetailsForOrder(oid) {
         }
     });
 }
-
 
 $("#btnClear").click(function () {
     $("#tblOrderDetail tbody").empty();

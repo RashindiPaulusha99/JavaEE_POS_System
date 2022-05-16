@@ -2,18 +2,24 @@ package Servlets;
 
 import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane;
 
+import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/purchaseOrder")
 public class PurchaseOrderServlet extends HttpServlet {
+
+    @Resource(name = "java:comp/env/jdbc/pool")
+    DataSource dataSource;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -22,9 +28,7 @@ public class PurchaseOrderServlet extends HttpServlet {
         String orderId = req.getParameter("orderId");
 
         try {
-
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos", "root", "1234");
+            Connection connection = dataSource.getConnection();
 
             switch (option){
                 case "SEARCH":
@@ -124,9 +128,9 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                     break;
             }
+            connection.close();
 
-
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -144,8 +148,8 @@ public class PurchaseOrderServlet extends HttpServlet {
         Connection connection = null;
         try {
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
+            connection = dataSource.getConnection();
+
             connection.setAutoCommit(false);
 
             switch (option){
@@ -200,11 +204,11 @@ public class PurchaseOrderServlet extends HttpServlet {
                     }
 
                     break;
-
             }
+            connection.close();
 
 
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
 
