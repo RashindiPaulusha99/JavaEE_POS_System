@@ -167,14 +167,6 @@ function loadCustomerIds() {
                 $("#ids").append($("<option></option>").attr("value", countCustomerIds).text(ids.id));
                 countCustomerIds++;
             }
-
-            /*if ($("#ids option:selected").text() == response.id){
-                $("#orderCusName").val(response.name);
-                $("#orderCusId").val(response.id);
-                $("#orderCusContact").val(response.contact);
-                $("#orderCusNIC").val(response.nic);
-                $("#orderCusAddress").val(response.address);
-            }*/
         },
         error: function (ob, statusText, error) {
         }
@@ -193,7 +185,6 @@ $("#ids").click(function () {
             $("#orderCusAddress").val(response.address);
         },
         error: function (ob, statusText, error) {
-            //alert(statusText);
         }
     });
 });
@@ -227,6 +218,7 @@ $("#codes").click(function () {
     clickCodes($("#codes option:selected").text());
 });
 
+var amount = 0;
 function clickCodes(code) {
     $.ajax({
         url: "item?option=SEARCH&itemCode=" + code,
@@ -237,11 +229,12 @@ function clickCodes(code) {
             $("#orderItemName").val(response.itemName);
             $("#orderQty").val(response.qtyOnHand);
             $("#orderPrice").val(response.unitPrice);
+            amount = response.qtyOnHand;
         },
         error: function (ob, statusText, error) {
-            //alert(statusText);
         }
     });
+    return amount;
 }
 
 $("#sellQty").keyup(function (event) {
@@ -678,13 +671,14 @@ function addDataToOrderDB(orderObject,itemDetail) {
 }
 
 function updateItemQty(itemDetail) {
-    for (let i = 0; i < itemDetail.length; i++) {
+    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
+        let qty = clickCodes($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText);
         var itemDetails={
-            code:itemDetail[i].getOrderItemCode(),
-            kind:itemDetail[i].getOrderItemKind(),
-            itemName:itemDetail[i].getOrderItemName(),
-            qtyOnHand:itemDetail[i].getSellQty(),
-            unitPrice:itemDetail[i].getOrderUnitPrice()
+            code:$("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
+            kind:$("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
+            itemName:$("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
+            qtyOnHand:(parseInt(qty) - parseInt($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText))+"",
+            unitPrice:$("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText
         }
         console.log(itemDetails);
 
@@ -694,7 +688,6 @@ function updateItemQty(itemDetail) {
             contentType: "application/json",
             data: JSON.stringify(itemDetails),
             success:function (response) {
-                console.log(response);
                 if (response.status == 200){
                     alert($("#itemCode").val() + " " + response.message);
                 }else if (response.status == 400){
