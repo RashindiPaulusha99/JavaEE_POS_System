@@ -1,5 +1,4 @@
-function OrderDetailDTO(oID, code, kind, iName, sellQty, price, discount, total) {
-    var __orderId = oID;
+function OrderDetailDTO(code, kind, iName, sellQty, price, discount, total) {
     var __code = code;
     var __kind = kind;
     var __ItemName = iName;
@@ -7,13 +6,6 @@ function OrderDetailDTO(oID, code, kind, iName, sellQty, price, discount, total)
     var __unitPrice = price;
     var __itemDiscount = discount;
     var __total = total;
-
-    this.setOrderDetailId = function (e) {
-        __orderId = e;
-    }
-    this.getOrderDetailId  = function () {
-        return __orderId;
-    }
 
     this.setOrderItemCode = function (e) {
         __code = e;
