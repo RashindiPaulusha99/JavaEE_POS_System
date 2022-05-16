@@ -9,41 +9,66 @@ function disableOrderFields() {
 
 $("#btnSearchOrders").click(function () {
 
-    $("#tblOrderDetail tbody tr").empty();
-    var trimid=$.trim($("#searchOrderId").val());
+    $("#tblOrderDetail tbody").empty();
+    var oid = $.trim($("#searchOrderId").val());
 
-    var ifExists = false;
-    for (var i = 0; i <orderDB.length ; i++) {
-        if (trimid == orderDB[i].getOrderId()){
-            ifExists = true;
-        }
-    }
-
-    if (ifExists == true) {
-        for (var i = 0; i < orderDB.length; i++) {
-            if (trimid == orderDB[i].getOrderId()) {
-                $("#cusId").val(orderDB[i].getOrderCusId());
-                $("#OID").val(trimid);
-                $("#ODate").val(orderDB[i].getOrderDate());
-                $("#netAmount").val(orderDB[i].getNetTotal());
-                $("#grossAmount").val(orderDB[i].getGrossTotal());
-            }
-        }
-
-        for (var i = 0; i < orderDetailsDB.length; i++) {
-            if (trimid == orderDetailsDB[i].getOrderDetailId()) {
-                let raw = `<tr><td> ${orderDetailsDB[i].getOrderItemCode()} </td><td> ${orderDetailsDB[i].getOrderItemKind()} </td><td> ${orderDetailsDB[i].getOrderItemName()} </td><td> ${orderDetailsDB[i].getSellQty()} </td><td> ${orderDetailsDB[i].getOrderUnitPrice()} </td><td> ${orderDetailsDB[i].getDiscount()} </td><td> ${orderDetailsDB[i].getTotal()} </td></tr>`;
-                $("#tblOrderDetail tbody").append(raw);
-            }
-        }
-
-        $("#itemQty").val($("#tblOrderDetail tbody tr").length);
-
-    }else if (ifExists == false){
-        alert("No Such Order");
-    }
+    searchORDER(oid);
+    searchDetailsForOrder(oid);
 
 });
+
+function searchORDER(oid) {
+    $.ajax({
+        url: "purchaseOrder?option=SEARCH&orderId=" + oid,
+        method: "GET",
+        success: function (response) {
+            console.log("search");
+            $("#cusId").val(response.cusId);
+            $("#OID").val(response.orderId);
+            $("#ODate").val(response.orderDate);
+            $("#grossAmount").val(response.grossTotal);
+            $("#netAmount").val(response.netTotal);
+
+            searchItemQty(oid);
+        },
+        error: function (ob, statusText, error) {
+            alert("No Such Order");
+        }
+    });
+}
+
+function searchItemQty(oid) {
+    $.ajax({
+        url: "purchaseOrder?option=COUNTQTY&orderId=" + oid,
+        method: "GET",
+        success: function (response) {
+            console.log("search");
+            $("#itemQty").val(response);
+        },
+        error: function (ob, statusText, error) {
+            alert("No Quantity.");
+        }
+    });
+}
+
+function searchDetailsForOrder(oid) {
+    $.ajax({
+        url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + oid,
+        method: "GET",
+        success: function (response) {
+            console.log(response);
+            $("#tblOrderDetail tbody").empty()
+            for (var oDetails of response) {
+                let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td></tr>`;
+                $("#tblOrderDetail tbody").append(raw);
+            }
+        },
+        error: function (ob, statusText, error) {
+            alert("No Such Order Details.");
+        }
+    });
+}
+
 
 $("#btnClear").click(function () {
     $("#tblOrderDetail tbody").empty();

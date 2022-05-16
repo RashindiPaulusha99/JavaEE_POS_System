@@ -84,6 +84,7 @@ public class ItemServlet extends HttpServlet {
                     }
 
                     break;
+
             }
 
         } catch (SQLException | ClassNotFoundException throwables) {

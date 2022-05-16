@@ -83,14 +83,14 @@ $("#btnNew").click(function () {
 
 $("#btnSearchOrder").click(function () {
     $("#tblOrder tbody tr").empty();
-
-    searchOrder();
-    searchOrderDetails();
+    var oid = $.trim($("#searchOrder").val());
+    searchOrder(oid);
+    searchOrderDetails(oid);
 });
 
-function searchOrder() {
+function searchOrder(oid) {
     $.ajax({
-        url: "purchaseOrder?option=SEARCH&orderId=" + $.trim($("#searchOrder").val()),
+        url: "purchaseOrder?option=SEARCH&orderId=" + oid,
         method: "GET",
         success: function (response) {
             $("#orderCusId").val(response.cusId);
@@ -124,9 +124,9 @@ function searchCustomerDetail(cusId) {
     });
 }
 
-function searchOrderDetails() {
+function searchOrderDetails(oid) {
     $.ajax({
-        url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + $.trim($("#searchOrder").val()),
+        url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + oid,
         method: "GET",
         success: function (response) {
             console.log(response);
