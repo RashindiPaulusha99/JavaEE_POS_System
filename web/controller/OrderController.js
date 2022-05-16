@@ -90,7 +90,7 @@ $("#btnSearchOrder").click(function () {
 
 function searchOrder() {
     $.ajax({
-        url: "order?option=SEARCH&orderId=" + $.trim($("#searchOrder").val()),
+        url: "purchaseOrder?option=SEARCH&orderId=" + $.trim($("#searchOrder").val()),
         method: "GET",
         success: function (response) {
             $("#orderCusId").val(response.cusId);
@@ -119,14 +119,14 @@ function searchCustomerDetail(cusId) {
             $("#orderCusNIC").val(response.nic);
         },
         error: function (ob, statusText, error) {
-            //alert("No Such Customer");
+            alert("No Such Customer");
         }
     });
 }
 
 function searchOrderDetails() {
     $.ajax({
-        url: "orderDetail?option=SEARCH&orderId=" + $.trim($("#searchOrder").val()),
+        url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + $.trim($("#searchOrder").val()),
         method: "GET",
         success: function (response) {
             for (var oDetails of response) {
@@ -139,17 +139,6 @@ function searchOrderDetails() {
         }
     });
 }
-
-/*function ifRefusePurchase(code, qty) {
-    var addQty = parseInt(qty);
-    for (var j = 0; j < itemDB.length; j++) {
-        if (code == itemDB[j].getItemCode()) {
-            var manageQty = parseInt(itemDB[j].getQtyOnHand());
-            manageQty += addQty;
-            itemDB[j].setQtyOnHand(manageQty);
-        }
-    }
-}*/
 
 /*-------------------Customer Sec-----------------------*/
 
@@ -218,7 +207,6 @@ $("#codes").click(function () {
     clickCodes($("#codes option:selected").text());
 });
 
-var amount = 0;
 function clickCodes(code) {
     $.ajax({
         url: "item?option=SEARCH&itemCode=" + code,
@@ -229,12 +217,10 @@ function clickCodes(code) {
             $("#orderItemName").val(response.itemName);
             $("#orderQty").val(response.qtyOnHand);
             $("#orderPrice").val(response.unitPrice);
-            amount = response.qtyOnHand;
         },
         error: function (ob, statusText, error) {
         }
     });
-    return amount;
 }
 
 $("#sellQty").keyup(function (event) {
@@ -286,30 +272,6 @@ function manageReduceQty(qty) {
     var qtyOnHand = parseInt($("#orderQty").val());
     qtyOnHand += parseInt(qty);
     $("#orderQty").val(qtyOnHand);
-}
-
-function updateQty(itemObject) {
-
-    var itemDetails = {
-        code: itemObject.getItemCode(),
-        kind: itemObject.getKind(),
-        itemName: itemObject.getItemName(),
-        qtyOnHand: itemObject.getQtyOnHand(),
-        unitPrice: itemObject.getUnitPrice()
-    }
-    console.log(itemDetails);
-    $.ajax({
-        url: "item",
-        method: "PUT",
-        contentType: "application/json",
-        data: JSON.stringify(itemDetails),
-        success: function (response) {
-            console.log("success");
-        },
-        error: function (ob, statusText, error) {
-            console.log("error");
-        }
-    });
 }
 
 /*----------gross amount----------*/
@@ -615,22 +577,7 @@ function searchOrderIdForPurchase(orderObject) {
             alert("Something Wrong.");
         },
         error: function (ob, statusText, error) {
-            console.log("error");
-
-            var itemDetail = new Array();
-            for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-                var orderDetails = new OrderDetailDTO(
-                    $("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
-                    $("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
-                );
-                itemDetail.push(orderDetails);
-            }
-            addDataToOrderDB(orderObject,itemDetail);
+            addDataToOrderDB(orderObject);
         }
     });
 }
@@ -647,18 +594,18 @@ function addDataToOrderDB(orderObject,itemDetail) {
     }
 
     $.ajax({
-        url:"purchaseOrder",
+        url:"purchaseOrder?option=Order",
         method:"POST",
         contentType:"application/json",
         data: JSON.stringify(order),
         success:function (response) {
             if (response.status == 200){
                 if (response.message == "Successfully Purchased Order."){
-                    updateItemQty(itemDetail);
-                    alert($("#customerId").val() + " " + response.message);
+                    addDataToOrderDetailDB();
+                    alert(response.message);
 
                 }else if (response.message == "Error"){
-                    alert(response.data + " " + "Already Exists.");
+                    alert(response.data);
                 }
             }else if (response.status == "400"){
                 alert(response.data);
@@ -670,9 +617,39 @@ function addDataToOrderDB(orderObject,itemDetail) {
     });
 }
 
-function updateItemQty(itemDetail) {
+function addDataToOrderDetailDB() {
+
     for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-        let qty = clickCodes($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText);
+        var orderDetail={
+            oId:$("#orderId").val(),
+            itemId:$("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
+            itemKind:$("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
+            itemName:$("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
+            sellQty:$("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
+            unitPrice:$("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
+            itemDiscount:$("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
+            total:$("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
+        }
+
+        $.ajax({
+            url:"purchaseOrder?option=OrderDetail",
+            method:"POST",
+            contentType:"application/json",
+            data: JSON.stringify(orderDetail),
+            success:function (response) {
+                updateItemQty();
+            },
+            error:function (ob , statusText , error) {
+            }
+        });
+
+    }
+
+}
+
+function updateItemQty() {
+    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
+        let qty = searchQtyOnHand($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText);
         var itemDetails={
             code:$("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
             kind:$("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
@@ -689,47 +666,31 @@ function updateItemQty(itemDetail) {
             data: JSON.stringify(itemDetails),
             success:function (response) {
                 if (response.status == 200){
-                    alert($("#itemCode").val() + " " + response.message);
+
                 }else if (response.status == 400){
                     alert(response.message);
                 }else {
                     alert(response.data);
                 }
-                loadItemDetails();
             },
             error:function (ob, statusText, error) {
-                alert(statusText);
-                loadItemDetails();
             }
         });
     }
 }
 
-function addDataToOrderDetailDB(orderDetails) {
-    console.log(orderDetails+"4");
-    var orderDetail={
-        oId:orderDetails.getOrderDetailId(),
-        itemId:orderDetails.getOrderItemCode(),
-        itemKind:orderDetails.getOrderItemKind(),
-        itemName:orderDetails.getOrderItemName(),
-        sellQty:orderDetails.getSellQty(),
-        unitPrice:orderDetails.getOrderUnitPrice(),
-        itemDiscount:orderDetails.getDiscount(),
-        total:orderDetails.getTotal()
-    }
-
+var amount = 0;
+function searchQtyOnHand(code) {
     $.ajax({
-        url:"orderDetail",
-        method:"POST",
-        contentType:"application/json",
-        data: JSON.stringify(orderDetail),
-        success:function (response) {
-            console.log("success");
+        url: "item?option=SEARCH&itemCode=" + code,
+        method: "GET",
+        success: function (response) {
+            amount = response.qtyOnHand;
         },
-        error:function (ob , statusText , error) {
-
+        error: function (ob, statusText, error) {
         }
     });
+    return amount;
 }
 
 function clearAll() {
@@ -752,5 +713,3 @@ function clearAll() {
     $("#discount").css('border', '2px solid transparent');
     $("#cash").css('border', '2px solid transparent');
 }
-
-/*when put data to order and orderdetails db , item qty must update*/

@@ -1,4 +1,3 @@
-var regExCusID=/^(C00-)[0-9]{3,4}$/;
 var regExCusName=/^[A-Z|a-z\s]{3,20}$/;
 var regExCusGender=/^[^0-9](female)|(male)|(Female)|(Male)$/;
 var regExCusContact=/^(071-|077-|075-|078-|)[0-9]{7}$/;
@@ -6,21 +5,7 @@ var regExCusNIC=/^[0-9]{9}(v)$/;
 var regExCusAddress=/^[0-9A-Z a-z,/:]{4,50}$/;
 var regExCusEmail=/^[0-9A-Z a-z$&#]{3,10}(@gmail.com)|(@yahoo.com)$/;
 
-$("#customerId").keyup(function (event) {
-
-    let id = $("#customerId").val();
-
-    if (regExCusID.test(id)){
-        $("#customerId").css('border','2px solid green');
-        $("#errorId").text("");
-        if (event.key=="Enter"){
-            $("#nameOfCustomer").focus();
-        }
-    }else {
-        $("#customerId").css('border','2px solid red');
-        $("#errorId").text("Customer Id is a required field: Pattern C00-000");
-    }
-});
+$("#customerId").prop('disabled', true);
 
 $("#nameOfCustomer").keyup(function (event) {
 
@@ -122,6 +107,32 @@ $('#customerId,#nameOfCustomer,#gender,#contact,#nic,#address,#email').keydown(f
         e.preventDefault();
     }
 });
+
+function generateCustomerIds() {
+    $("#customerId").val("C00-0001");
+
+    $.ajax({
+        url: "customer?option=GETIDS",
+        method: "GET",
+        success: function (response) {
+            var customerId = response.customerId;
+            var tempId = parseInt(customerId.split("-")[1]);
+            tempId = tempId + 1;
+            if (tempId <= 9) {
+                $("#customerId").val("C00-000" + tempId);
+            } else if (tempId <= 99) {
+                $("#customerId").val("C00-00" + tempId);
+            } else if (tempId <= 999) {
+                $("#customerId").val("C00-0" + tempId);
+            } else {
+                $("#customerId").val("C00-" + tempId);
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+
+    });
+}
 
 var tblCustomerRow;
 

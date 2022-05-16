@@ -1,23 +1,9 @@
-var regExItemID=/^(I00-)[0-9]{3,4}$/;
 var regExKind=/^[A-Z|a-z\s]{3,20}$/;
 var regExItemName=/^[A-Z|a-z\s]{3,20}$/;
 var regExQuantity=/^[0-9]{2,20}$/;
 var regExUnitPrice=/^[0-9]{1,10}(.)[0-9]{2}$/;
 
-$("#itemCode").keyup(function (event) {
-
-    let itemCode = $("#itemCode").val();
-    if (regExItemID.test(itemCode)){
-        $("#itemCode").css('border','2px solid blue');
-        $("#errorCode").text("");
-        if (event.key=="Enter"){
-            $("#kind").focus();
-        }
-    }else {
-        $("#itemCode").css('border','2px solid red');
-        $("#errorCode").text("Item Code is a required field: Pattern I00-000");
-    }
-});
+$("#itemCode").prop('disabled', true);
 
 $("#kind").keyup(function (event) {
 
@@ -88,6 +74,32 @@ $('#itemCode,#kind,#nameOfItem,#qty,#unitPrice').keydown(function (e) {
         e.preventDefault();
     }
 });
+
+function generateItemCodes() {
+    $("#itemCode").val("I00-0001");
+
+    $.ajax({
+        url: "item?option=GETIDS",
+        method: "GET",
+        success: function (response) {
+            var itemCode = response.itemCode;
+            var tempId = parseInt(itemCode.split("-")[1]);
+            tempId = tempId + 1;
+            if (tempId <= 9) {
+                $("#itemCode").val("I00-000" + tempId);
+            } else if (tempId <= 99) {
+                $("#itemCode").val("I00-00" + tempId);
+            } else if (tempId <= 999) {
+                $("#itemCode").val("I00-0" + tempId);
+            } else {
+                $("#itemCode").val("I00-" + tempId);
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+
+    });
+}
 
 var tblItemRow;
 

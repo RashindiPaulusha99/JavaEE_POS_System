@@ -11,6 +11,8 @@ count();
 function count() {
     countCustomers();
     countItems();
+    countOrders();
+    income();
 }
 
 function countCustomers() {
@@ -21,7 +23,6 @@ function countCustomers() {
             $("#customerCount").text(response);
         },
         error:function (ob, statusText, error) {
-            alert(statusText);
         }
     });
 }
@@ -34,7 +35,30 @@ function countItems() {
             $("#itemCount").text(response);
         },
         error:function (ob, statusText, error) {
-            alert(statusText);
+        }
+    });
+}
+
+function countOrders() {
+    $.ajax({
+        url:"purchaseOrder?option=COUNT",
+        method:"GET",
+        success:function (response) {
+            $("#orderCount").text(response);
+        },
+        error:function (ob, statusText, error) {
+        }
+    });
+}
+
+function income(){
+    $.ajax({
+        url:"purchaseOrder?option=TOTAL",
+        method:"GET",
+        success:function (response) {
+            $("#income").text(response+"/=");
+        },
+        error:function (ob, statusText, error) {
         }
     });
 }
@@ -51,7 +75,8 @@ $("#customer").click(function () {
     $("#orderDetailName").css('display','none');
     $("#orderDetailSec").css('display','none');
 
-    $("#customerId").focus();
+    generateCustomerIds();
+    $("#nameOfCustomer").focus();
 });
 
 $("#item").click(function () {
@@ -67,7 +92,8 @@ $("#item").click(function () {
     $("#orderDetailSec").css('display','none');
 
     loadItemDetails();
-    $("#itemCode").focus();
+    $("#kind").focus();
+    generateItemCodes();
 });
 
 $("#home").click(function () {

@@ -78,6 +78,17 @@ public class CustomerServlet extends HttpServlet {
 
                     break;
 
+                case "GETIDS":
+
+                    ResultSet rset = connection.prepareStatement("SELECT customerId FROM Customer ORDER BY customerId DESC LIMIT 1").executeQuery();
+                    while (rset.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("customerId",rset.getString(1));
+                        writer.print(objectBuilder.build());
+                    }
+
+                    break;
+
             }
 
         } catch (SQLException | ClassNotFoundException throwables) {

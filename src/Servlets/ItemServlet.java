@@ -73,6 +73,17 @@ public class ItemServlet extends HttpServlet {
                     }
 
                     break;
+
+                case "GETIDS":
+
+                    ResultSet rset = connection.prepareStatement("SELECT itemCode FROM Item ORDER BY itemCode DESC LIMIT 1").executeQuery();
+                    while (rset.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("itemCode",rset.getString(1));
+                        writer.print(objectBuilder.build());
+                    }
+
+                    break;
             }
 
         } catch (SQLException | ClassNotFoundException throwables) {

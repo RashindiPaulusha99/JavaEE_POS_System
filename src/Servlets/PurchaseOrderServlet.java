@@ -1,5 +1,7 @@
 package Servlets;
 
+import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane;
+
 import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,6 +45,27 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                     break;
 
+                case "SEARCHDETAILS":
+
+                    ResultSet rSet = connection.prepareStatement("SELECT * FROM `Order Detail` WHERE oId='" + orderId + "'").executeQuery();
+
+                    while (rSet.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("oId",rSet.getString(1));
+                        objectBuilder.add("itemId",rSet.getString(2));
+                        objectBuilder.add("itemKind",rSet.getString(3));
+                        objectBuilder.add("itemName",rSet.getString(4));
+                        objectBuilder.add("sellQty",rSet.getString(5));
+                        objectBuilder.add("unitPrice",rSet.getString(6));
+                        objectBuilder.add("itemDiscount",rSet.getString(7));
+                        objectBuilder.add("total",rSet.getString(8));
+
+                        writer.write(String.valueOf(objectBuilder.build()));
+
+                    }
+
+                    break;
+
                 case "GETALL":
 
                     ResultSet rset = connection.prepareStatement("SELECT * FROM Customer").executeQuery();
@@ -73,6 +96,24 @@ public class PurchaseOrderServlet extends HttpServlet {
                     }
 
                     break;
+
+                case "COUNT":
+
+                    ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM `Order`").executeQuery();
+                    while (rsts.next()){
+                        writer.print(rsts.getInt(1));
+                    }
+
+                    break;
+
+                case "TOTAL":
+
+                    ResultSet set = connection.prepareStatement(" SELECT SUM(netTotal) FROM `Order`").executeQuery();
+                    while (set.next()){
+                        writer.print(set.getInt(1));
+                    }
+
+                    break;
             }
 
 
@@ -86,46 +127,73 @@ public class PurchaseOrderServlet extends HttpServlet {
         resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
 
+        String option = req.getParameter("option");
+
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
-        //JsonArray jsonValues = reader.readArray();
 
-        //String items = jsonValues.getString(Integer.parseInt("items"));
-
+        Connection connection = null;
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
-            //connection.setAutoCommit(false);
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Pos","root","1234");
+            connection.setAutoCommit(false);
 
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES(?,?,?,?,?)");
-            pstm.setObject(1,jsonObject.getString("orderId"));
-            pstm.setObject(2,jsonObject.getString("cusId"));
-            pstm.setObject(3,jsonObject.getString("orderDate"));
-            pstm.setObject(4,jsonObject.getString("grossTotal"));
-            pstm.setObject(5,jsonObject.getString("netTotal"));
-            System.out.println(jsonObject.getString("orderId"));
-            System.out.println("order");
+            switch (option){
+                case "Order":
 
-            if (pstm.executeUpdate()>0) {
+                    PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES(?,?,?,?,?)");
+                    pstm.setObject(1,jsonObject.getString("orderId"));
+                    pstm.setObject(2,jsonObject.getString("cusId"));
+                    pstm.setObject(3,jsonObject.getString("orderDate"));
+                    pstm.setObject(4,jsonObject.getString("grossTotal"));
+                    pstm.setObject(5,jsonObject.getString("netTotal"));
+                    System.out.println(jsonObject.getString("orderId"));
+                    System.out.println("order");
 
-                resp.setStatus(HttpServletResponse.SC_OK);
-                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("message", "Successfully Purchased Order.");
-                objectBuilder.add("status", resp.getStatus());
-                writer.print(objectBuilder.build());
+                    if (pstm.executeUpdate()>0) {
+                        connection.commit();
 
-                /*PreparedStatement stm = connection.prepareStatement("INSERT INTO `Order Detail` VALUES(?,?,?,?,?,?,?,?)");
-                stm.setObject(1,jsonObject.getString("oId"));
-                stm.setObject(2,jsonObject.getString("itemId"));
-                stm.setObject(3,jsonObject.getString("itemKind"));
-                stm.setObject(4,jsonObject.getString("itemName"));
-                stm.setObject(5,jsonObject.getString("sellQty"));
-                stm.setObject(6,jsonObject.getString("unitPrice"));
-                stm.setObject(7,jsonObject.getString("itemDiscount"));
-                stm.setObject(8,jsonObject.getString("total"));*/
+                        resp.setStatus(HttpServletResponse.SC_OK);
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("message", "Successfully Purchased Order.");
+                        objectBuilder.add("status", resp.getStatus());
+                        writer.print(objectBuilder.build());
+
+                    }else {
+                        connection.rollback();
+                    }
+
+                    break;
+                case "OrderDetail" :
+
+                    PreparedStatement stm = connection.prepareStatement("INSERT INTO `Order Detail` VALUES(?,?,?,?,?,?,?,?)");
+                    stm.setObject(1,jsonObject.getString("oId"));
+                    stm.setObject(2,jsonObject.getString("itemId"));
+                    stm.setObject(3,jsonObject.getString("itemKind"));
+                    stm.setObject(4,jsonObject.getString("itemName"));
+                    stm.setObject(5,jsonObject.getString("sellQty"));
+                    stm.setObject(6,jsonObject.getString("unitPrice"));
+                    stm.setObject(7,jsonObject.getString("itemDiscount"));
+                    stm.setObject(8,jsonObject.getString("total"));
+
+                    if (stm.executeUpdate()>0){
+                        connection.commit();
+
+                        resp.setStatus(HttpServletResponse.SC_OK);
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("message", "Successfully Purchased Order.");
+                        objectBuilder.add("status", resp.getStatus());
+                        writer.print(objectBuilder.build());
+
+                    }else {
+                        connection.rollback();
+                    }
+
+                    break;
 
             }
+
 
         } catch (ClassNotFoundException | SQLException e) {
 
@@ -138,6 +206,15 @@ public class PurchaseOrderServlet extends HttpServlet {
             writer.print(objectBuilder.build());
 
             e.printStackTrace();
+
+        }finally {
+            try {
+
+                connection.setAutoCommit(true);
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 
