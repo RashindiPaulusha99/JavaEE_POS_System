@@ -48,6 +48,7 @@ public class PurchaseOrderServlet extends HttpServlet {
                 case "SEARCHDETAILS":
 
                     ResultSet rSet = connection.prepareStatement("SELECT * FROM `Order Detail` WHERE oId='" + orderId + "'").executeQuery();
+                    JsonArrayBuilder arrayBuilder1 = Json.createArrayBuilder();
 
                     while (rSet.next()){
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
@@ -59,10 +60,9 @@ public class PurchaseOrderServlet extends HttpServlet {
                         objectBuilder.add("unitPrice",rSet.getString(6));
                         objectBuilder.add("itemDiscount",rSet.getString(7));
                         objectBuilder.add("total",rSet.getString(8));
-
-                        writer.write(String.valueOf(objectBuilder.build()));
-
+                        arrayBuilder1.add(objectBuilder.build());
                     }
+                    writer.write(String.valueOf(arrayBuilder1.build()));
 
                     break;
 

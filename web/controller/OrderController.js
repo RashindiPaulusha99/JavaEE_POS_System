@@ -129,13 +129,15 @@ function searchOrderDetails() {
         url: "purchaseOrder?option=SEARCHDETAILS&orderId=" + $.trim($("#searchOrder").val()),
         method: "GET",
         success: function (response) {
+            console.log(response);
+            $("#tblOrder tbody").empty()
             for (var oDetails of response) {
                 let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td><td> <input id='btnEdit' class='btn btn-success btn-sm' value='Update' style="width: 75px"/> </td><td> <input id='btnDelete' class='btn btn-danger btn-sm' value='Delete' style="width: 75px"/> </td></tr>`;
                 $("#tblOrder tbody").append(raw);
             }
         },
         error: function (ob, statusText, error) {
-            //alert("No Such Order");
+            alert("No Such Order Details.");
         }
     });
 }
