@@ -223,7 +223,6 @@ function clickCodes(code) {
             }else {
                 for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
                     if ($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText == code){
-                        console.log($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText);
                         $("#orderQty").val(response.qtyOnHand - parseInt($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText))
                     }else {
                         $("#orderQty").val(response.qtyOnHand);
@@ -371,7 +370,7 @@ $("#btnAddCart").click(function () {
 
             if (ifDuplicate != true) { /*that means new item*/
 
-                if (parseInt($("#orderQty").val()) >= sellQty || parseInt($("#orderQty").val()) > 0) {
+                if (parseInt($("#orderQty").val()) >= sellQty || parseInt($("#orderQty").val()) < 0) {
 
                     manageAddQty(sellQty);
                     calculateGrossAmount(gross);
@@ -391,7 +390,7 @@ $("#btnAddCart").click(function () {
 
                 if (click == "clicked") {
 
-                    if (parseInt($("#orderQty").val()) >= sellQty || parseInt($("#orderQty").val()) > 0) {
+                    if (parseInt($("#orderQty").val()) >= sellQty || parseInt($("#orderQty").val()) < 0) {
 
                         let newVar = parseInt(sellQty) + parseInt($(tblOrderRow).children(':nth-child(4)').text());
                         let previousGross = parseInt($(tblOrderRow).children(':nth-child(4)').text()) * unitPrice;
@@ -597,7 +596,22 @@ function searchOrderIdForPurchase(orderObject) {
     });
 }
 
-function addDataToOrderDB(orderObject,itemDetail) {
+function addDataToOrderDB(orderObject) {
+
+    let details = new Array();
+    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
+        var orderDetail = {
+            oId: $("#orderId").val(),
+            itemId: $("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
+            itemKind: $("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
+            itemName: $("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
+            sellQty: $("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
+            unitPrice: $("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
+            itemDiscount: $("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
+            total: $("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
+        }
+        details.push(orderDetail);
+    }
 
     var order={
         orderId:orderObject.getOrderId(),
@@ -605,18 +619,18 @@ function addDataToOrderDB(orderObject,itemDetail) {
         cusId:orderObject.getOrderCusId(),
         grossTotal:orderObject.getGrossTotal(),
         netTotal:orderObject.getNetTotal(),
-        items:itemDetail
+        items:details
     }
 
     $.ajax({
-        url:"purchaseOrder?option=Order",
+        url:"purchaseOrder?",
         method:"POST",
         contentType:"application/json",
         data: JSON.stringify(order),
         success:function (response) {
             if (response.status == 200){
                 if (response.message == "Successfully Purchased Order."){
-                    addDataToOrderDetailDB();
+                    //addDataToOrderDetailDB();
                     alert(response.message);
 
                 }else if (response.message == "Error"){
@@ -630,82 +644,6 @@ function addDataToOrderDB(orderObject,itemDetail) {
             alert(statusText);
         }
     });
-}
-
-function addDataToOrderDetailDB() {
-
-    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-        var orderDetail={
-            oId:$("#orderId").val(),
-            itemId:$("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
-            itemKind:$("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
-            itemName:$("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
-            sellQty:$("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText,
-            unitPrice:$("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText,
-            itemDiscount:$("#tblOrder tbody tr").children(':nth-child(6)')[i].innerText,
-            total:$("#tblOrder tbody tr").children(':nth-child(7)')[i].innerText
-        }
-
-        $.ajax({
-            url:"purchaseOrder?option=OrderDetail",
-            method:"POST",
-            contentType:"application/json",
-            data: JSON.stringify(orderDetail),
-            success:function (response) {
-                updateItemQty();
-            },
-            error:function (ob , statusText , error) {
-            }
-        });
-
-    }
-
-}
-
-function updateItemQty() {
-    for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
-        let qty = searchQtyOnHand($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText);
-        var itemDetails={
-            code:$("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText,
-            kind:$("#tblOrder tbody tr").children(':nth-child(2)')[i].innerText,
-            itemName:$("#tblOrder tbody tr").children(':nth-child(3)')[i].innerText,
-            qtyOnHand:(parseInt(qty) - parseInt($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText))+"",
-            unitPrice:$("#tblOrder tbody tr").children(':nth-child(5)')[i].innerText
-        }
-        console.log(itemDetails);
-
-        $.ajax({
-            url:"item",
-            method:"PUT",
-            contentType: "application/json",
-            data: JSON.stringify(itemDetails),
-            success:function (response) {
-                if (response.status == 200){
-
-                }else if (response.status == 400){
-                    alert(response.message);
-                }else {
-                    alert(response.data);
-                }
-            },
-            error:function (ob, statusText, error) {
-            }
-        });
-    }
-}
-
-var amount = 0;
-function searchQtyOnHand(code) {
-    $.ajax({
-        url: "item?option=SEARCH&itemCode=" + code,
-        method: "GET",
-        success: function (response) {
-            amount = response.qtyOnHand;
-        },
-        error: function (ob, statusText, error) {
-        }
-    });
-    return amount;
 }
 
 function clearAll() {

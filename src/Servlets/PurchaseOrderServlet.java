@@ -140,10 +140,9 @@ public class PurchaseOrderServlet extends HttpServlet {
         resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
 
-        String option = req.getParameter("option");
-
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
+        JsonArray items = jsonObject.getJsonArray("items");
 
         Connection connection = null;
         try {
@@ -152,61 +151,58 @@ public class PurchaseOrderServlet extends HttpServlet {
 
             connection.setAutoCommit(false);
 
-            switch (option){
-                case "Order":
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES(?,?,?,?,?)");
+            pstm.setObject(1,jsonObject.getString("orderId"));
+            pstm.setObject(2,jsonObject.getString("cusId"));
+            pstm.setObject(3,jsonObject.getString("orderDate"));
+            pstm.setObject(4,jsonObject.getString("grossTotal"));
+            pstm.setObject(5,jsonObject.getString("netTotal"));
+            System.out.println(jsonObject.getString("orderId"));
 
-                    PreparedStatement pstm = connection.prepareStatement("INSERT INTO `Order` VALUES(?,?,?,?,?)");
-                    pstm.setObject(1,jsonObject.getString("orderId"));
-                    pstm.setObject(2,jsonObject.getString("cusId"));
-                    pstm.setObject(3,jsonObject.getString("orderDate"));
-                    pstm.setObject(4,jsonObject.getString("grossTotal"));
-                    pstm.setObject(5,jsonObject.getString("netTotal"));
-                    System.out.println(jsonObject.getString("orderId"));
-                    System.out.println("order");
+            if (pstm.executeUpdate()>0) {
 
-                    if (pstm.executeUpdate()>0) {
-                        connection.commit();
+                for (JsonValue item : items) {
 
-                        resp.setStatus(HttpServletResponse.SC_OK);
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("message", "Successfully Purchased Order.");
-                        objectBuilder.add("status", resp.getStatus());
-                        writer.print(objectBuilder.build());
-
-                    }else {
-                        connection.rollback();
-                    }
-
-                    break;
-                case "OrderDetail" :
-
+                    JsonObject jo = item.asJsonObject();
                     PreparedStatement stm = connection.prepareStatement("INSERT INTO `Order Detail` VALUES(?,?,?,?,?,?,?,?)");
-                    stm.setObject(1,jsonObject.getString("oId"));
-                    stm.setObject(2,jsonObject.getString("itemId"));
-                    stm.setObject(3,jsonObject.getString("itemKind"));
-                    stm.setObject(4,jsonObject.getString("itemName"));
-                    stm.setObject(5,jsonObject.getString("sellQty"));
-                    stm.setObject(6,jsonObject.getString("unitPrice"));
-                    stm.setObject(7,jsonObject.getString("itemDiscount"));
-                    stm.setObject(8,jsonObject.getString("total"));
+                    stm.setObject(1,jo.getString("oId"));
+                    stm.setObject(2,jo.getString("itemId"));
+                    stm.setObject(3,jo.getString("itemKind"));
+                    stm.setObject(4,jo.getString("itemName"));
+                    stm.setObject(5,jo.getString("sellQty"));
+                    stm.setObject(6,jo.getString("unitPrice"));
+                    stm.setObject(7,jo.getString("itemDiscount"));
+                    stm.setObject(8,jo.getString("total"));
+
+                    String code = jo.getString("itemId");
+                    int qty = Integer.parseInt(jo.getString("sellQty"));
 
                     if (stm.executeUpdate()>0){
-                        connection.commit();
 
-                        resp.setStatus(HttpServletResponse.SC_OK);
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("message", "Successfully Purchased Order.");
-                        objectBuilder.add("status", resp.getStatus());
-                        writer.print(objectBuilder.build());
+                        PreparedStatement ptm = connection.prepareStatement("UPDATE Item SET qtyOnHand=(qtyOnHand - " + qty + " )  WHERE itemCode='"+ code +"'");
 
+                        if (ptm.executeUpdate()>0){
+
+                        }else {
+                            connection.rollback();
+                        }
                     }else {
                         connection.rollback();
                     }
+                }
+                connection.commit();
 
-                    break;
+                resp.setStatus(HttpServletResponse.SC_OK);
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("message", "Successfully Purchased Order.");
+                objectBuilder.add("status", resp.getStatus());
+                writer.print(objectBuilder.build());
+
+            }else {
+                connection.rollback();
             }
-            connection.close();
 
+            connection.close();
 
         } catch (SQLException e) {
 
