@@ -52,7 +52,9 @@ function generateOrderId() {
 $("#btnNew").click(function () {
     netAmount = 0;
     grossAmount = 0;
+
     generateOrderId();
+
     $("#orderItemName").val("");
     $("#orderItemCode").val("");
     $("#orderKind").val("");
@@ -413,11 +415,9 @@ $("#btnAddCart").click(function () {
                     alert("Please Select A Row.");
                 }
             }
-
         } else {
 
         }
-
     }
 
     clickRow();
@@ -476,7 +476,6 @@ function updateQtyOnHandWhenClickRow(code, sellqty) {
             $("#orderQty").val((response.qtyOnHand - sellqty));
         },
         error: function (ob, statusText, error) {
-            //alert(statusText);
         }
     });
 }
@@ -541,21 +540,7 @@ $("#btnPurchase").click(function () {
 
         if (confirm(text) == true) {
 
-            let amountOfGross = $("#gross").val();
-            let amountOfNet = $("#net").val();
-            let orderDate = $("#orderDate").val();
-            let cusIds = $("#orderCusId").val();
-            let orderId = $("#orderId").val();
-
-            var order = new OrderDTO(
-                orderId,
-                orderDate,
-                cusIds,
-                amountOfGross,
-                amountOfNet
-            );
-
-            searchOrderIdForPurchase(order);
+            searchOrderIdForPurchase();
 
             manageBalance();
 
@@ -582,21 +567,20 @@ function manageBalance() {
     $("#btnAddCart").attr('disabled', false);
 }
 
-function searchOrderIdForPurchase(orderObject) {
-
+function searchOrderIdForPurchase() {
     $.ajax({
-        url: "http://localhost:8080/backend/purchaseOrder?option=SEARCH&orderId=" + orderObject.getOrderId(),
+        url: "http://localhost:8080/backend/purchaseOrder?option=SEARCH&orderId=" + $("#orderId").val(),
         method: "GET",
         success: function (response) {
             alert("Something Wrong.");
         },
         error: function (ob, statusText, error) {
-            addDataToOrderDB(orderObject);
+            addDataToOrderDB();
         }
     });
 }
 
-function addDataToOrderDB(orderObject) {
+function addDataToOrderDB() {
 
     let details = new Array();
     for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
@@ -614,11 +598,11 @@ function addDataToOrderDB(orderObject) {
     }
 
     var order={
-        orderId:orderObject.getOrderId(),
-        orderDate:orderObject.getOrderDate(),
-        cusId:orderObject.getOrderCusId(),
-        grossTotal:orderObject.getGrossTotal(),
-        netTotal:orderObject.getNetTotal(),
+        orderId:$("#orderId").val(),
+        orderDate:$("#orderDate").val(),
+        cusId:$("#orderCusId").val(),
+        grossTotal:$("#gross").val(),
+        netTotal:$("#net").val(),
         items:details
     }
 
@@ -647,6 +631,7 @@ function addDataToOrderDB(orderObject) {
 }
 
 function clearAll() {
+
     clearFieldsWhenAddItem();
 
     $("#orderCusName").val("");
