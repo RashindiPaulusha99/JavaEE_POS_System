@@ -1,5 +1,9 @@
 package Servlets;
 
+import DAO.CustomerDAOImpl;
+import DTO.CustomerDTO;
+import Entity.Customer;
+
 import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
@@ -111,40 +115,36 @@ public class CustomerServlet extends HttpServlet {
         JsonObject jsonObject = reader.readObject();
 
         try {
-
             Connection connection = dataSource.getConnection();
 
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO Customer VALUES(?,?,?,?,?,?,?)");
-            pstm.setObject(1,jsonObject.getString("id"));
-            pstm.setObject(2,jsonObject.getString("name"));
-            pstm.setObject(3,jsonObject.getString("gender"));
-            pstm.setObject(4,jsonObject.getString("contact"));
-            pstm.setObject(5,jsonObject.getString("nic"));
-            pstm.setObject(6,jsonObject.getString("address"));
-            pstm.setObject(7,jsonObject.getString("email"));
+            Customer customer = new Customer(
+                    jsonObject.getString("id"),
+                    jsonObject.getString("name"),
+                    jsonObject.getString("gender"),
+                    jsonObject.getString("contact"),
+                    jsonObject.getString("nic"),
+                    jsonObject.getString("address"),
+                    jsonObject.getString("email")
+            );
 
-            if (pstm.executeUpdate()>0) {
-
+            if (new CustomerDAOImpl().addCustomer(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Customer Successfully Added.");
                 objectBuilder.add("status", resp.getStatus());
                 writer.print(objectBuilder.build());
-
             }
             connection.close();
 
-        } catch (SQLException e) {
-
+        } catch (SQLException throwables) {
             resp.setStatus(HttpServletResponse.SC_OK);
-
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-            objectBuilder.add("data",e.getLocalizedMessage());
+            objectBuilder.add("data",throwables.getLocalizedMessage());
             objectBuilder.add("message","Error");
             objectBuilder.add("status",resp.getStatus());
             writer.print(objectBuilder.build());
 
-            e.printStackTrace();
+            throwables.printStackTrace();
         }
 
     }
@@ -160,7 +160,7 @@ public class CustomerServlet extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            if (connection.prepareStatement("DELETE FROM Customer WHERE customerId='"+ cusId +"'").executeUpdate()>0) {
+            if (new CustomerDAOImpl().deleteCustomer(cusId,connection)) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -204,16 +204,17 @@ public class CustomerServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            PreparedStatement pstm = connection.prepareStatement("UPDATE Customer SET customerName=?,Gender=?,contact=?,NIC=?,address=?,email=? WHERE customerId=?");
-            pstm.setObject(1,jsonObject.getString("name"));
-            pstm.setObject(2,jsonObject.getString("gender"));
-            pstm.setObject(3,jsonObject.getString("contact"));
-            pstm.setObject(4,jsonObject.getString("nic"));
-            pstm.setObject(5,jsonObject.getString("address"));
-            pstm.setObject(6,jsonObject.getString("email"));
-            pstm.setObject(7,jsonObject.getString("id"));
+            Customer customer = new Customer(
+                    jsonObject.getString("id"),
+                    jsonObject.getString("name"),
+                    jsonObject.getString("gender"),
+                    jsonObject.getString("contact"),
+                    jsonObject.getString("nic"),
+                    jsonObject.getString("address"),
+                    jsonObject.getString("email")
+            );
 
-            if (pstm.executeUpdate()>0) {
+            if (new CustomerDAOImpl().updateCustomer(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message","Customer Successfully Updated.");

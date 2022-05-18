@@ -212,7 +212,8 @@ function loadAllCustomer() {
                 $("#tblCustomer tbody").append(raw);
             }
             clear();
-            clickEvent()
+            clickEvent();
+            generateCustomerIds();
         },
         error: function (ob, statusText, error) {
             alert(statusText);
@@ -427,6 +428,11 @@ $("#btnSearchCustomer").click(function () {
 
 $("#btnViewCustomer").click(function () {
     loadAllCustomer();
+});
+
+$("#btnNewCustomer").click(function () {
+    clear();
+    generateCustomerIds();
 });
 
 
