@@ -1,1 +1,0 @@
-var customerDB = new Array();

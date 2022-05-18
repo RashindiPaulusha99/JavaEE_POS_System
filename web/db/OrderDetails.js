@@ -1,1 +1,0 @@
-var orderDetailsDB = new Array();

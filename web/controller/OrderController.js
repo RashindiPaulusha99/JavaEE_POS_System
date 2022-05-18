@@ -217,7 +217,20 @@ function clickCodes(code) {
             $("#orderItemCode").val(response.code);
             $("#orderKind").val(response.kind);
             $("#orderItemName").val(response.itemName);
-            $("#orderQty").val(response.qtyOnHand);
+
+            if ($("#tblOrder tbody tr").length == 0){
+                $("#orderQty").val(response.qtyOnHand);
+            }else {
+                for (var i = 0; i < $("#tblOrder tbody tr").length; i++) {
+                    if ($("#tblOrder tbody tr").children(':nth-child(1)')[i].innerText == code){
+                        console.log($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText);
+                        $("#orderQty").val(response.qtyOnHand - parseInt($("#tblOrder tbody tr").children(':nth-child(4)')[i].innerText))
+                    }else {
+                        $("#orderQty").val(response.qtyOnHand);
+                    }
+                }
+            }
+
             $("#orderPrice").val(response.unitPrice);
         },
         error: function (ob, statusText, error) {
