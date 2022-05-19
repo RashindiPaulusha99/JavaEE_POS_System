@@ -1,7 +1,6 @@
 package Servlets;
 
 import DAO.CustomerDAOImpl;
-import DTO.CustomerDTO;
 import Entity.Customer;
 
 import javax.annotation.Resource;
