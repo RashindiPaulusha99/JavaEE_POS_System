@@ -1,6 +1,7 @@
 package Servlets;
 
 import DAO.ItemDAOImpl;
+import Entity.Customer;
 import Entity.Item;
 
 import javax.annotation.Resource;
@@ -109,8 +110,8 @@ public class ItemServlet extends HttpServlet {
                     jsonObject.getString("code"),
                     jsonObject.getString("kind"),
                     jsonObject.getString("itemName"),
-                    jsonObject.getInt("qtyOnHand"),
-                    jsonObject.getInt("unitPrice")
+                    Integer.parseInt(jsonObject.getString("qtyOnHand")),
+                    Double.parseDouble(jsonObject.getString("unitPrice"))
             );
 
             if (itemDAO.add(item, connection)){
@@ -193,8 +194,8 @@ public class ItemServlet extends HttpServlet {
                     jsonObject.getString("code"),
                     jsonObject.getString("kind"),
                     jsonObject.getString("itemName"),
-                    jsonObject.getInt("qtyOnHand"),
-                    jsonObject.getInt("unitPrice")
+                    Integer.parseInt(jsonObject.getString("qtyOnHand")),
+                    Double.parseDouble(jsonObject.getString("unitPrice"))
             );
 
             if (itemDAO.update(item, connection)) {

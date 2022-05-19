@@ -1,5 +1,8 @@
 package Servlets;
 
+import DAO.OrderDAOImpl;
+import DAO.OrderDetailDAOImpl;
+import Entity.Order;
 import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane;
 
 import javax.annotation.Resource;
@@ -20,6 +23,10 @@ public class PurchaseOrderServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
+    OrderDAOImpl orderDAO = new OrderDAOImpl();
+    OrderDetailDAOImpl orderDetailDAO = new OrderDetailDAOImpl();
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -33,19 +40,16 @@ public class PurchaseOrderServlet extends HttpServlet {
             switch (option){
                 case "SEARCH":
 
-                    ResultSet resultSet = connection.prepareStatement("SELECT * FROM `Order` WHERE orderId='" + orderId + "'").executeQuery();
+                    Order order = orderDAO.search(orderId, connection);
 
-                    while (resultSet.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("orderId",resultSet.getString(1));
-                        objectBuilder.add("cusId",resultSet.getString(2));
-                        objectBuilder.add("orderDate",resultSet.getString(3));
-                        objectBuilder.add("grossTotal",resultSet.getString(4));
-                        objectBuilder.add("netTotal",resultSet.getString(5));
+                    JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                    objectBuilder.add("orderId",order.getOrderId());
+                    objectBuilder.add("cusId",order.getCustomerId());
+                    objectBuilder.add("orderDate",order.getOrderDate());
+                    objectBuilder.add("grossTotal",order.getGrossTotal());
+                    objectBuilder.add("netTotal",order.getNetTotal());
 
-                        writer.write(String.valueOf(objectBuilder.build()));
-
-                    }
+                    writer.write(String.valueOf(objectBuilder.build()));
 
                     break;
 
@@ -55,16 +59,16 @@ public class PurchaseOrderServlet extends HttpServlet {
                     JsonArrayBuilder arrayBuilder1 = Json.createArrayBuilder();
 
                     while (rSet.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("oId",rSet.getString(1));
-                        objectBuilder.add("itemId",rSet.getString(2));
-                        objectBuilder.add("itemKind",rSet.getString(3));
-                        objectBuilder.add("itemName",rSet.getString(4));
-                        objectBuilder.add("sellQty",rSet.getString(5));
-                        objectBuilder.add("unitPrice",rSet.getString(6));
-                        objectBuilder.add("itemDiscount",rSet.getString(7));
-                        objectBuilder.add("total",rSet.getString(8));
-                        arrayBuilder1.add(objectBuilder.build());
+                        JsonObjectBuilder ob = Json.createObjectBuilder();
+                        ob.add("oId",rSet.getString(1));
+                        ob.add("itemId",rSet.getString(2));
+                        ob.add("itemKind",rSet.getString(3));
+                        ob.add("itemName",rSet.getString(4));
+                        ob.add("sellQty",rSet.getString(5));
+                        ob.add("unitPrice",rSet.getString(6));
+                        ob.add("itemDiscount",rSet.getString(7));
+                        ob.add("total",rSet.getString(8));
+                        arrayBuilder1.add(ob.build());
                     }
                     writer.write(String.valueOf(arrayBuilder1.build()));
 
@@ -72,18 +76,18 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                 case "GETALL":
 
-                    ResultSet rset = connection.prepareStatement("SELECT * FROM Customer").executeQuery();
+                    ResultSet rset = connection.prepareStatement("SELECT * FROM `Order`").executeQuery();
 
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
                     while (rset.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("orderId",rset.getString(1));
-                        objectBuilder.add("cusId",rset.getString(2));
-                        objectBuilder.add("orderDate",rset.getString(3));
-                        objectBuilder.add("grossTotal",rset.getString(4));
-                        objectBuilder.add("netTotal",rset.getString(5));
-                        arrayBuilder.add(objectBuilder.build());
+                        JsonObjectBuilder obje = Json.createObjectBuilder();
+                        obje.add("orderId",rset.getString(1));
+                        obje.add("cusId",rset.getString(2));
+                        obje.add("orderDate",rset.getString(3));
+                        obje.add("grossTotal",rset.getString(4));
+                        obje.add("netTotal",rset.getString(5));
+                        arrayBuilder.add(obje.build());
 
                     }
                     writer.write(String.valueOf(arrayBuilder.build()));
@@ -94,9 +98,9 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                     ResultSet rst = connection.prepareStatement("SELECT orderId FROM `Order` ORDER BY orderId DESC LIMIT 1").executeQuery();
                     while (rst.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("orderId",rst.getString(1));
-                        writer.print(objectBuilder.build());
+                        JsonObjectBuilder obj = Json.createObjectBuilder();
+                        obj.add("orderId",rst.getString(1));
+                        writer.print(obj.build());
                     }
 
                     break;

@@ -149,7 +149,7 @@ function addItemToDB() {
                 if (response.message == "Item Successfully Added.") {
                     alert($("#itemCode").val() + " " + response.message);
                 } else if (response.message == "Error") {
-                    alert(response.data + " " + "Already Exists.");
+                    alert(response.data);
                 }
             } else if (response.status == "400") {
                 alert(response.data);
@@ -176,6 +176,7 @@ function loadItemDetails() {
             }
             clearItems();
             clickEventForItem();
+            generateItemCodes();
         },
         error: function (ob, statusText, error) {
             alert(statusText);
@@ -184,6 +185,7 @@ function loadItemDetails() {
 }
 
 function clearItems() {
+    generateItemCodes();
     $("#itemCode").val("");
     $("#kind").val("");
     $("#nameOfItem").val("");

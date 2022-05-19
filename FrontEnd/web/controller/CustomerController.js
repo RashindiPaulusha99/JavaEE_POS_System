@@ -185,7 +185,7 @@ function addCustomerToDB() {
                 if (response.message == "Customer Successfully Added.") {
                     alert($("#customerId").val() + " " + response.message);
                 } else if (response.message == "Error") {
-                    alert(response.data + " " + "Already Exists.");
+                    alert(response.data);
                 }
             } else if (response.status == "400") {
                 alert(response.data);

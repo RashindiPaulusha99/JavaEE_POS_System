@@ -1,6 +1,5 @@
 package DAO;
 
-import DAO.CrudDAO;
 import Entity.Item;
 
 import java.sql.Connection;
