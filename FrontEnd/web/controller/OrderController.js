@@ -131,7 +131,6 @@ function searchOrderDetails(oid) {
         url: "http://localhost:8080/backend/purchaseOrder?option=SEARCHDETAILS&orderId=" + oid,
         method: "GET",
         success: function (response) {
-            console.log(response);
             $("#tblOrder tbody").empty()
             for (var oDetails of response) {
                 let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td><td> <input id='btnEdit' class='btn btn-success btn-sm' value='Update' style="width: 75px"/> </td><td> <input id='btnDelete' class='btn btn-danger btn-sm' value='Delete' style="width: 75px"/> </td></tr>`;

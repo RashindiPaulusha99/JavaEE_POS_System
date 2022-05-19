@@ -1,6 +1,5 @@
 package DAO;
 
-import Entity.Customer;
 import Entity.Order;
 
 import java.sql.Connection;
@@ -47,5 +46,41 @@ public class OrderDAOImpl implements OrderDAO{
     @Override
     public ArrayList<Order> getAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException("No Supported Yet.");
+    }
+
+    @Override
+    public String getOrderId(Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT orderId FROM `Order` ORDER BY orderId DESC LIMIT 1",
+                connection
+        );
+        if (rst.next()){
+            return rst.getString(1);
+        }else {
+            return null;
+        }
+    }
+
+    @Override
+    public int countOrders(Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT COUNT(*) FROM `Order`",
+                connection
+        );
+        if (rst.next()){
+            return rst.getInt(1);
+        }else {
+            return 0;
+        }
+    }
+
+    @Override
+    public double findNetTotal(Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT SUM(netTotal) FROM `Order`",
+                connection
+        );
+        if (rst.next()){
+            return rst.getDouble(1);
+        }else {
+            return 0;
+        }
     }
 }

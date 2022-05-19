@@ -3,7 +3,7 @@ package Servlets;
 import DAO.OrderDAOImpl;
 import DAO.OrderDetailDAOImpl;
 import Entity.Order;
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameTitlePane;
+import Entity.OrderDetail;
 
 import javax.annotation.Resource;
 import javax.json.*;
@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.ArrayList;
 
 @WebServlet(urlPatterns = "/purchaseOrder")
 public class PurchaseOrderServlet extends HttpServlet {
@@ -25,7 +26,6 @@ public class PurchaseOrderServlet extends HttpServlet {
 
     OrderDAOImpl orderDAO = new OrderDAOImpl();
     OrderDetailDAOImpl orderDetailDAO = new OrderDetailDAOImpl();
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,71 +55,43 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                 case "SEARCHDETAILS":
 
-                    ResultSet rSet = connection.prepareStatement("SELECT * FROM `Order Detail` WHERE oId='" + orderId + "'").executeQuery();
+                    ArrayList<OrderDetail> orderDetails = orderDetailDAO.searchOrderDetail(orderId, connection);
+
                     JsonArrayBuilder arrayBuilder1 = Json.createArrayBuilder();
 
-                    while (rSet.next()){
+                    for (OrderDetail orderDetail : orderDetails) {
                         JsonObjectBuilder ob = Json.createObjectBuilder();
-                        ob.add("oId",rSet.getString(1));
-                        ob.add("itemId",rSet.getString(2));
-                        ob.add("itemKind",rSet.getString(3));
-                        ob.add("itemName",rSet.getString(4));
-                        ob.add("sellQty",rSet.getString(5));
-                        ob.add("unitPrice",rSet.getString(6));
-                        ob.add("itemDiscount",rSet.getString(7));
-                        ob.add("total",rSet.getString(8));
+                        ob.add("oId",orderDetail.getOrderId());
+                        ob.add("itemId",orderDetail.getItemCode());
+                        ob.add("itemKind",orderDetail.getKind());
+                        ob.add("itemName",orderDetail.getItemName());
+                        ob.add("sellQty",orderDetail.getSellQty());
+                        ob.add("unitPrice",orderDetail.getUnitPrice());
+                        ob.add("itemDiscount",orderDetail.getItemDiscount());
+                        ob.add("total",orderDetail.getTotal());
                         arrayBuilder1.add(ob.build());
                     }
                     writer.write(String.valueOf(arrayBuilder1.build()));
 
                     break;
 
-                case "GETALL":
-
-                    ResultSet rset = connection.prepareStatement("SELECT * FROM `Order`").executeQuery();
-
-                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-
-                    while (rset.next()){
-                        JsonObjectBuilder obje = Json.createObjectBuilder();
-                        obje.add("orderId",rset.getString(1));
-                        obje.add("cusId",rset.getString(2));
-                        obje.add("orderDate",rset.getString(3));
-                        obje.add("grossTotal",rset.getString(4));
-                        obje.add("netTotal",rset.getString(5));
-                        arrayBuilder.add(obje.build());
-
-                    }
-                    writer.write(String.valueOf(arrayBuilder.build()));
-
-                    break;
-
                 case "GETIDS":
 
-                    ResultSet rst = connection.prepareStatement("SELECT orderId FROM `Order` ORDER BY orderId DESC LIMIT 1").executeQuery();
-                    while (rst.next()){
-                        JsonObjectBuilder obj = Json.createObjectBuilder();
-                        obj.add("orderId",rst.getString(1));
-                        writer.print(obj.build());
-                    }
+                    JsonObjectBuilder obj = Json.createObjectBuilder();
+                    obj.add("orderId",orderDAO.getOrderId(connection));
+                    writer.print(obj.build());
 
                     break;
 
                 case "COUNT":
 
-                    ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM `Order`").executeQuery();
-                    while (rsts.next()){
-                        writer.print(rsts.getInt(1));
-                    }
+                    writer.print(orderDAO.countOrders(connection));
 
                     break;
 
                 case "TOTAL":
 
-                    ResultSet set = connection.prepareStatement(" SELECT SUM(netTotal) FROM `Order`").executeQuery();
-                    while (set.next()){
-                        writer.print(set.getInt(1));
-                    }
+                    writer.print(orderDAO.findNetTotal(connection));
 
                     break;
 
