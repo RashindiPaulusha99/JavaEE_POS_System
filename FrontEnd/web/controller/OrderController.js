@@ -613,7 +613,6 @@ function addDataToOrderDB() {
         success:function (response) {
             if (response.status == 200){
                 if (response.message == "Successfully Purchased Order."){
-                    //addDataToOrderDetailDB();
                     alert(response.message);
 
                 }else if (response.message == "Error"){

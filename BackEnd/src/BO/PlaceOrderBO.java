@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public interface PlaceOrderBO extends SuperBO{
     boolean placeOrder(OrderDTO orderDTO,Connection connection);
-    boolean saveOrderDetail(OrderDTO orderDTO, Connection connection);
+    boolean saveOrderDetail(OrderDTO orderDTO, Connection connection) throws SQLException;
     boolean updateQtyOnHand(String code,int qty, Connection connection) throws SQLException;
     String getOrderId(Connection connection) throws SQLException;
     int countOrders(Connection connection) throws SQLException;

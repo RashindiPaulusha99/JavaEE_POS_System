@@ -11,7 +11,11 @@ public class OrderDAOImpl implements OrderDAO{
 
     @Override
     public boolean add(Order order, Connection connection) throws SQLException {
-        return false;
+        return CrudUtil.executeUpdate(
+                "INSERT INTO `Order` VALUES(?,?,?,?,?)",
+                connection,
+                order.getOrderId(),order.getCustomerId(),order.getOrderDate(),order.getGrossTotal(),order.getNetTotal()
+                );
     }
 
     @Override

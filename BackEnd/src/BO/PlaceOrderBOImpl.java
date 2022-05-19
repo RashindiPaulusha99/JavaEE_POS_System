@@ -21,11 +21,62 @@ public class PlaceOrderBOImpl implements PlaceOrderBO{
 
     @Override
     public boolean placeOrder(OrderDTO orderDTO, Connection connection) {
+        try {
+            connection.setAutoCommit(false);
+
+            boolean ifSaveOrder = orderDAO.add(new Order(
+                            orderDTO.getOrderId(),
+                            orderDTO.getCustomerId(),
+                            orderDTO.getOrderDate(),
+                            orderDTO.getGrossTotal(),
+                            orderDTO.getNetTotal()),
+                    connection
+            );
+
+            if (ifSaveOrder){
+                if (saveOrderDetail(orderDTO,connection)){
+                    connection.commit();
+                    return true;
+                }else {
+                    connection.rollback();
+                    return false;
+                }
+            }else {
+                connection.rollback();
+                return false;
+            }
+        } catch (SQLException throwables) {
+        } finally {
+            try {
+
+                connection.setAutoCommit(true);
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
         return false;
     }
 
     @Override
-    public boolean saveOrderDetail(OrderDTO orderDTO, Connection connection) {
+    public boolean saveOrderDetail(OrderDTO orderDTO, Connection connection) throws SQLException {
+        for (OrderDetailDTO item : orderDTO.getItems()) {
+            boolean ifOrderDetailSaved = orderDetailDAO.add(new OrderDetail(
+                            item.getOrderId(), item.getItemCode(), item.getKind(), item.getItemName(), item.getSellQty(), item.getUnitPrice(), item.getItemDiscount(), item.getTotal()),
+                    connection
+            );
+            if (ifOrderDetailSaved){
+                if (updateQtyOnHand(item.getItemCode(),item.getSellQty(),connection)){
+
+                }else {
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }
+
         return false;
     }
 

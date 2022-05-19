@@ -11,7 +11,11 @@ public class OrderDetailDAOImpl implements OrderDetailDAO{
 
     @Override
     public boolean add(OrderDetail orderDetail, Connection connection) throws SQLException {
-        return false;
+        return CrudUtil.executeUpdate(
+                "INSERT INTO `Order Detail` VALUES(?,?,?,?,?,?,?,?)",
+                connection,
+                orderDetail.getOrderId(),orderDetail.getItemCode(),orderDetail.getKind(),orderDetail.getItemName(),orderDetail.getSellQty(),orderDetail.getUnitPrice(),orderDetail.getItemDiscount(),orderDetail.getTotal()
+        );
     }
 
     @Override
