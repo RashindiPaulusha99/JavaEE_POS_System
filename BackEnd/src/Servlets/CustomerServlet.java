@@ -132,15 +132,15 @@ public class CustomerServlet extends HttpServlet {
             }
             connection.close();
 
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_OK);
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-            objectBuilder.add("data",throwables.getLocalizedMessage());
+            objectBuilder.add("data",e.getLocalizedMessage());
             objectBuilder.add("message","Error");
             objectBuilder.add("status",resp.getStatus());
             writer.print(objectBuilder.build());
 
-            throwables.printStackTrace();
+            e.printStackTrace();
         }
 
     }

@@ -1,5 +1,8 @@
 package Servlets;
 
+import DAO.ItemDAOImpl;
+import Entity.Item;
+
 import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
@@ -11,12 +14,16 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/item")
 public class ItemServlet extends HttpServlet {
 
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
+
+    ItemDAOImpl itemDAO = new ItemDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,37 +40,31 @@ public class ItemServlet extends HttpServlet {
             switch (option) {
                 case "SEARCH":
 
-                    ResultSet resultSet = connection.prepareStatement("SELECT * FROM Item WHERE itemCode='" + itemCode + "'").executeQuery();
+                    Item item = itemDAO.search(itemCode, connection);
 
-                    while (resultSet.next()) {
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("code", resultSet.getString(1));
-                        objectBuilder.add("kind", resultSet.getString(2));
-                        objectBuilder.add("itemName", resultSet.getString(3));
-                        objectBuilder.add("qtyOnHand", resultSet.getString(4));
-                        objectBuilder.add("unitPrice", resultSet.getString(5));
+                    JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                    objectBuilder.add("code", item.getItemCode());
+                    objectBuilder.add("kind", item.getKind());
+                    objectBuilder.add("itemName", item.getItemName());
+                    objectBuilder.add("qtyOnHand", item.getQtyOnHand());
+                    objectBuilder.add("unitPrice", item.getUnitPrice());
 
-                        writer.write(String.valueOf(objectBuilder.build()));
-
-                    }
+                    writer.write(String.valueOf(objectBuilder.build()));
 
                     break;
 
                 case "GETALL":
-
-                    ResultSet rst = connection.prepareStatement("SELECT * FROM Item").executeQuery();
-
+                    ArrayList<Item> all = itemDAO.getAll(connection);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                    while (rst.next()) {
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("code", rst.getString(1));
-                        objectBuilder.add("kind", rst.getString(2));
-                        objectBuilder.add("itemName", rst.getString(3));
-                        objectBuilder.add("qtyOnHand", rst.getString(4));
-                        objectBuilder.add("unitPrice", rst.getString(5));
-                        arrayBuilder.add(objectBuilder.build());
-
+                    for (Item i : all) {
+                        JsonObjectBuilder ob = Json.createObjectBuilder();
+                        ob.add("code", i.getItemCode());
+                        ob.add("kind", i.getKind());
+                        ob.add("itemName", i.getItemName());
+                        ob.add("qtyOnHand", i.getQtyOnHand());
+                        ob.add("unitPrice", i.getUnitPrice());
+                        arrayBuilder.add(ob.build());
                     }
                     writer.write(String.valueOf(arrayBuilder.build()));
 
@@ -71,20 +72,17 @@ public class ItemServlet extends HttpServlet {
 
                 case "COUNT":
 
-                    ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM Item").executeQuery();
-                    while (rsts.next()) {
-                        writer.print(rsts.getInt(1));
-                    }
+                    writer.print(itemDAO.countItems(connection));
 
                     break;
 
                 case "GETIDS":
 
-                    ResultSet rset = connection.prepareStatement("SELECT itemCode FROM Item ORDER BY itemCode DESC LIMIT 1").executeQuery();
-                    while (rset.next()) {
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("itemCode", rset.getString(1));
-                        writer.print(objectBuilder.build());
+                    List<String> codes = itemDAO.getCodes(connection);
+                    for (String code : codes) {
+                        JsonObjectBuilder obj = Json.createObjectBuilder();
+                        obj.add("itemCode", code);
+                        writer.print(obj.build());
                     }
 
                     break;
@@ -105,24 +103,22 @@ public class ItemServlet extends HttpServlet {
         JsonObject jsonObject = reader.readObject();
 
         try {
-
             Connection connection = dataSource.getConnection();
 
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO Item VALUES(?,?,?,?,?)");
-            pstm.setObject(1,jsonObject.getString("code"));
-            pstm.setObject(2,jsonObject.getString("kind"));
-            pstm.setObject(3,jsonObject.getString("itemName"));
-            pstm.setObject(4,jsonObject.getString("qtyOnHand"));
-            pstm.setObject(5,jsonObject.getString("unitPrice"));
+            Item item = new Item(
+                    jsonObject.getString("code"),
+                    jsonObject.getString("kind"),
+                    jsonObject.getString("itemName"),
+                    jsonObject.getInt("qtyOnHand"),
+                    jsonObject.getInt("unitPrice")
+            );
 
-            if (pstm.executeUpdate()>0) {
-
+            if (itemDAO.add(item, connection)){
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Item Successfully Added.");
                 objectBuilder.add("status", resp.getStatus());
                 writer.print(objectBuilder.build());
-
             }
             connection.close();
 
@@ -150,7 +146,7 @@ public class ItemServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            if (connection.prepareStatement("DELETE FROM Item WHERE itemCode='"+ itemCode +"'").executeUpdate()>0) {
+            if (itemDAO.delete(itemCode,connection)) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -193,14 +189,15 @@ public class ItemServlet extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            PreparedStatement pstm = connection.prepareStatement("UPDATE Item SET kind=?,itemName=?,qtyOnHand=?,unitPrice=? WHERE itemCode=?");
-            pstm.setObject(1,jsonObject.getString("kind"));
-            pstm.setObject(2,jsonObject.getString("itemName"));
-            pstm.setObject(3,jsonObject.getString("qtyOnHand"));
-            pstm.setObject(4,jsonObject.getString("unitPrice"));
-            pstm.setObject(5,jsonObject.getString("code"));
+            Item item = new Item(
+                    jsonObject.getString("code"),
+                    jsonObject.getString("kind"),
+                    jsonObject.getString("itemName"),
+                    jsonObject.getInt("qtyOnHand"),
+                    jsonObject.getInt("unitPrice")
+            );
 
-            if (pstm.executeUpdate()>0) {
+            if (itemDAO.update(item, connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message","Item Successfully Updated.");
