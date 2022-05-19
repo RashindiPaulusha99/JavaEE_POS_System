@@ -1,6 +1,8 @@
 package Servlets;
 
+import BO.CustomerBOImpl;
 import DAO.CustomerDAOImpl;
+import DTO.CustomerDTO;
 import Entity.Customer;
 
 import javax.annotation.Resource;
@@ -23,7 +25,7 @@ public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
-    CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+    CustomerBOImpl customerBO = new CustomerBOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,7 +43,7 @@ public class CustomerServlet extends HttpServlet {
 
                 case  "SEARCH":
 
-                    Customer customer = customerDAO.search(cusId, connection);
+                    CustomerDTO customer = customerBO.searchCustomer(cusId, connection);
 
                     JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                     objectBuilder.add("id",customer.getCustomerId());
@@ -58,10 +60,10 @@ public class CustomerServlet extends HttpServlet {
 
                 case "GETALL":
 
-                    ArrayList<Customer> allCustomer = customerDAO.getAll(connection);
+                    ArrayList<CustomerDTO> allCustomer = customerBO.getAllCustomers(connection);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                    for (Customer c : allCustomer) {
+                    for (CustomerDTO c : allCustomer) {
                         JsonObjectBuilder ob = Json.createObjectBuilder();
                         ob.add("id",c.getCustomerId());
                         ob.add("name",c.getCustomerName());
@@ -78,13 +80,13 @@ public class CustomerServlet extends HttpServlet {
 
                 case "COUNT":
 
-                    writer.print(customerDAO.countCustomer(connection));
+                    writer.print(customerBO.countCustomer(connection));
 
                     break;
 
                 case "GETIDS":
 
-                    List<String> ids = customerDAO.getIds(connection);
+                    List<String> ids = customerBO.getCustomerIds(connection);
                     for (String id : ids) {
                         JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
                         objectBuilder1.add("customerId",id);
@@ -113,7 +115,7 @@ public class CustomerServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            Customer customer = new Customer(
+            CustomerDTO customer = new CustomerDTO(
                     jsonObject.getString("id"),
                     jsonObject.getString("name"),
                     jsonObject.getString("gender"),
@@ -123,7 +125,7 @@ public class CustomerServlet extends HttpServlet {
                     jsonObject.getString("email")
             );
 
-            if (customerDAO.add(customer,connection)) {
+            if (customerBO.saveCustomer(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Customer Successfully Added.");
@@ -156,7 +158,7 @@ public class CustomerServlet extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            if (customerDAO.delete(cusId,connection)) {
+            if (customerBO.deleteCustomer(cusId,connection)) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -200,7 +202,7 @@ public class CustomerServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            Customer customer = new Customer(
+            CustomerDTO customer = new CustomerDTO(
                     jsonObject.getString("id"),
                     jsonObject.getString("name"),
                     jsonObject.getString("gender"),
@@ -210,7 +212,7 @@ public class CustomerServlet extends HttpServlet {
                     jsonObject.getString("email")
             );
 
-            if (customerDAO.update(customer,connection)) {
+            if (customerBO.updateCustomer(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message","Customer Successfully Updated.");
