@@ -1,15 +1,10 @@
 package DAO;
 
 import Entity.Customer;
-import Servlets.CustomerServlet;
 
-import javax.annotation.Resource;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,23 +50,58 @@ public class CustomerDAOImpl {
         return false;
     }
 
-    public Customer searchCustomer(String id){
+    public Customer searchCustomer(String id,Connection connection) throws SQLException {
+        ResultSet rst = connection.prepareStatement("SELECT * FROM Customer WHERE customerId='" + id + "'").executeQuery();
 
-        return new Customer();
+        if (rst.next()){
+            return new Customer(
+                    rst.getString(1),
+                    rst.getString(2),
+                    rst.getString(3),
+                    rst.getString(4),
+                    rst.getString(5),
+                    rst.getString(6),
+                    rst.getString(7)
+            );
+        }else {
+            return null;
+        }
     }
 
-    public ArrayList<Customer> getAllCustomer(){
-
-        return new ArrayList<>();
+    public ArrayList<Customer> getAllCustomer(Connection connection) throws SQLException {
+        ResultSet rst = connection.prepareStatement("SELECT * FROM Customer").executeQuery();
+        ArrayList<Customer> customers = new ArrayList<>();
+        while (rst.next()){
+            customers.add(new Customer(
+                    rst.getString(1),
+                    rst.getString(2),
+                    rst.getString(3),
+                    rst.getString(4),
+                    rst.getString(5),
+                    rst.getString(6),
+                    rst.getString(7)
+            ));
+        }
+        return customers;
     }
 
-    public int countCustomer(){
+    public int countCustomer(Connection connection) throws SQLException {
+        ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM Customer").executeQuery();
+        int count = 0;
+        while (rsts.next()){
+            count = rsts.getInt(1);
+        }
 
-        return 0;
+        return count;
     }
 
-    /*public List<String> getIds(){
+    public List<String> getIds(Connection connection) throws SQLException {
+        ResultSet rst = connection.prepareStatement("SELECT customerId FROM Customer ORDER BY customerId DESC LIMIT 1").executeQuery();
+        List<String> ids = new ArrayList<>();
+        while (rst.next()) {
+            ids.add(rst.getString(1));
+        }
 
-        return new List<>();
-    }*/
+        return ids;
+    }
 }

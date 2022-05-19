@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
@@ -35,43 +37,39 @@ public class CustomerServlet extends HttpServlet {
             Connection connection = dataSource.getConnection();
 
             switch (option){
+
                 case  "SEARCH":
 
-                    ResultSet resultSet = connection.prepareStatement("SELECT * FROM Customer WHERE customerId='" + cusId + "'").executeQuery();
+                    Customer customer = new CustomerDAOImpl().searchCustomer(cusId, connection);
 
-                    while (resultSet.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("id",resultSet.getString(1));
-                        objectBuilder.add("name",resultSet.getString(2));
-                        objectBuilder.add("gender",resultSet.getString(3));
-                        objectBuilder.add("contact",resultSet.getString(4));
-                        objectBuilder.add("nic",resultSet.getString(5));
-                        objectBuilder.add("address",resultSet.getString(6));
-                        objectBuilder.add("email",resultSet.getString(7));
+                    JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                    objectBuilder.add("id",customer.getCustomerId());
+                    objectBuilder.add("name",customer.getCustomerName());
+                    objectBuilder.add("gender",customer.getGender());
+                    objectBuilder.add("contact",customer.getContact());
+                    objectBuilder.add("nic",customer.getNic());
+                    objectBuilder.add("address",customer.getAddress());
+                    objectBuilder.add("email",customer.getEmail());
 
-                        writer.write(String.valueOf(objectBuilder.build()));
-
-                    }
+                    writer.write(String.valueOf(objectBuilder.build()));
 
                  break;
 
                 case "GETALL":
 
-                    ResultSet rst = connection.prepareStatement("SELECT * FROM Customer").executeQuery();
-
+                    ArrayList<Customer> allCustomer = new CustomerDAOImpl().getAllCustomer(connection);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                    while (rst.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("id",rst.getString(1));
-                        objectBuilder.add("name",rst.getString(2));
-                        objectBuilder.add("gender",rst.getString(3));
-                        objectBuilder.add("contact",rst.getString(4));
-                        objectBuilder.add("nic",rst.getString(5));
-                        objectBuilder.add("address",rst.getString(6));
-                        objectBuilder.add("email",rst.getString(7));
-                        arrayBuilder.add(objectBuilder.build());
-
+                    for (Customer c : allCustomer) {
+                        JsonObjectBuilder ob = Json.createObjectBuilder();
+                        ob.add("id",c.getCustomerId());
+                        ob.add("name",c.getCustomerName());
+                        ob.add("gender",c.getGender());
+                        ob.add("contact",c.getContact());
+                        ob.add("nic",c.getNic());
+                        ob.add("address",c.getAddress());
+                        ob.add("email",c.getEmail());
+                        arrayBuilder.add(ob.build());
                     }
                     writer.write(String.valueOf(arrayBuilder.build()));
 
@@ -79,20 +77,17 @@ public class CustomerServlet extends HttpServlet {
 
                 case "COUNT":
 
-                    ResultSet rsts = connection.prepareStatement("SELECT COUNT(*) FROM Customer").executeQuery();
-                    while (rsts.next()){
-                        writer.print(rsts.getInt(1));
-                    }
+                    writer.print(new CustomerDAOImpl().countCustomer(connection));
 
                     break;
 
                 case "GETIDS":
 
-                    ResultSet rset = connection.prepareStatement("SELECT customerId FROM Customer ORDER BY customerId DESC LIMIT 1").executeQuery();
-                    while (rset.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("customerId",rset.getString(1));
-                        writer.print(objectBuilder.build());
+                    List<String> ids = new CustomerDAOImpl().getIds(connection);
+                    for (String id : ids) {
+                        JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
+                        objectBuilder1.add("customerId",id);
+                        writer.print(objectBuilder1.build());
                     }
 
                     break;
