@@ -55,4 +55,17 @@ public class OrderDetailDAOImpl implements OrderDetailDAO{
         }
         return orderDetails;
     }
+
+    @Override
+    public int countQtyOnHand(String id, Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT SUM(sellQty) FROM `Order Detail` WHERE oId=?",
+                connection,
+                id
+        );
+        if (rst.next()){
+            return rst.getInt(1);
+        }else {
+            return 0;
+        }
+    }
 }

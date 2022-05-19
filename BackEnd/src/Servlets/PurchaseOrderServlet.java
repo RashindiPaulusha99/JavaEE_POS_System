@@ -97,10 +97,7 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                 case "COUNTQTY":
 
-                    ResultSet rts = connection.prepareStatement("SELECT SUM(sellQty) FROM `Order Detail` WHERE oId='"+ orderId +"'").executeQuery();
-                    while (rts.next()){
-                        writer.print(rts.getInt(1));
-                    }
+                    writer.print(orderDetailDAO.countQtyOnHand(orderId,connection));
 
                     break;
             }
