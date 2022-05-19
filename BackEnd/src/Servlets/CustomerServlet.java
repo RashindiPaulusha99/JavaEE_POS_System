@@ -24,6 +24,8 @@ public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
+    CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -40,7 +42,7 @@ public class CustomerServlet extends HttpServlet {
 
                 case  "SEARCH":
 
-                    Customer customer = new CustomerDAOImpl().searchCustomer(cusId, connection);
+                    Customer customer = customerDAO.search(cusId, connection);
 
                     JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                     objectBuilder.add("id",customer.getCustomerId());
@@ -57,7 +59,7 @@ public class CustomerServlet extends HttpServlet {
 
                 case "GETALL":
 
-                    ArrayList<Customer> allCustomer = new CustomerDAOImpl().getAllCustomer(connection);
+                    ArrayList<Customer> allCustomer = customerDAO.getAll(connection);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
                     for (Customer c : allCustomer) {
@@ -77,13 +79,13 @@ public class CustomerServlet extends HttpServlet {
 
                 case "COUNT":
 
-                    writer.print(new CustomerDAOImpl().countCustomer(connection));
+                    writer.print(customerDAO.countCustomer(connection));
 
                     break;
 
                 case "GETIDS":
 
-                    List<String> ids = new CustomerDAOImpl().getIds(connection);
+                    List<String> ids = customerDAO.getIds(connection);
                     for (String id : ids) {
                         JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
                         objectBuilder1.add("customerId",id);
@@ -122,7 +124,7 @@ public class CustomerServlet extends HttpServlet {
                     jsonObject.getString("email")
             );
 
-            if (new CustomerDAOImpl().addCustomer(customer,connection)) {
+            if (customerDAO.add(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Customer Successfully Added.");
@@ -155,7 +157,7 @@ public class CustomerServlet extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            if (new CustomerDAOImpl().deleteCustomer(cusId,connection)) {
+            if (customerDAO.delete(cusId,connection)) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -209,7 +211,7 @@ public class CustomerServlet extends HttpServlet {
                     jsonObject.getString("email")
             );
 
-            if (new CustomerDAOImpl().updateCustomer(customer,connection)) {
+            if (customerDAO.update(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message","Customer Successfully Updated.");
