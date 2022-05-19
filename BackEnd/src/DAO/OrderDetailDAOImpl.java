@@ -16,7 +16,7 @@ public class OrderDetailDAOImpl implements OrderDetailDAO{
 
     @Override
     public boolean update(OrderDetail orderDetail, Connection connection) throws SQLException {
-        return false;
+        throw new UnsupportedOperationException("No Supported Yet.");
     }
 
     @Override

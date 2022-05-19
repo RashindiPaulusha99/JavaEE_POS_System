@@ -1,6 +1,7 @@
 package BO;
 
-import DAO.CustomerDAOImpl;
+import DAO.CustomerDAO;
+import DAO.DAOFactory;
 import DTO.CustomerDTO;
 import Entity.Customer;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class CustomerBOImpl implements CustomerBO{
 
-    CustomerDAOImpl customerDAO = new CustomerDAOImpl();
+    private CustomerDAO customerDAO = (CustomerDAO)DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.CUSTOMER);
 
     @Override
     public boolean saveCustomer(CustomerDTO customerDTO, Connection connection) throws SQLException {

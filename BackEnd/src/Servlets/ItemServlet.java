@@ -1,6 +1,8 @@
 package Servlets;
 
+import BO.ItemBOImpl;
 import DAO.ItemDAOImpl;
+import DTO.ItemDTO;
 import Entity.Customer;
 import Entity.Item;
 
@@ -24,7 +26,7 @@ public class ItemServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
-    ItemDAOImpl itemDAO = new ItemDAOImpl();
+    ItemBOImpl itemBO = new ItemBOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,7 +43,7 @@ public class ItemServlet extends HttpServlet {
             switch (option) {
                 case "SEARCH":
 
-                    Item item = itemDAO.search(itemCode, connection);
+                    ItemDTO item = itemBO.searchItem(itemCode, connection);
 
                     JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                     objectBuilder.add("code", item.getItemCode());
@@ -55,10 +57,10 @@ public class ItemServlet extends HttpServlet {
                     break;
 
                 case "GETALL":
-                    ArrayList<Item> all = itemDAO.getAll(connection);
+                    ArrayList<ItemDTO> all = itemBO.getAllItems(connection);
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                    for (Item i : all) {
+                    for (ItemDTO i : all) {
                         JsonObjectBuilder ob = Json.createObjectBuilder();
                         ob.add("code", i.getItemCode());
                         ob.add("kind", i.getKind());
@@ -73,13 +75,13 @@ public class ItemServlet extends HttpServlet {
 
                 case "COUNT":
 
-                    writer.print(itemDAO.countItems(connection));
+                    writer.print(itemBO.countItem(connection));
 
                     break;
 
                 case "GETIDS":
 
-                    List<String> codes = itemDAO.getCodes(connection);
+                    List<String> codes = itemBO.getItemCodes(connection);
                     for (String code : codes) {
                         JsonObjectBuilder obj = Json.createObjectBuilder();
                         obj.add("itemCode", code);
@@ -106,7 +108,7 @@ public class ItemServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            Item item = new Item(
+            ItemDTO item = new ItemDTO(
                     jsonObject.getString("code"),
                     jsonObject.getString("kind"),
                     jsonObject.getString("itemName"),
@@ -114,7 +116,7 @@ public class ItemServlet extends HttpServlet {
                     Double.parseDouble(jsonObject.getString("unitPrice"))
             );
 
-            if (itemDAO.add(item, connection)){
+            if (itemBO.saveItem(item, connection)){
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Item Successfully Added.");
@@ -147,7 +149,7 @@ public class ItemServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            if (itemDAO.delete(itemCode,connection)) {
+            if (itemBO.deleteItem(itemCode,connection)) {
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 resp.setStatus(HttpServletResponse.SC_OK);
@@ -190,7 +192,7 @@ public class ItemServlet extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            Item item = new Item(
+            ItemDTO item = new ItemDTO(
                     jsonObject.getString("code"),
                     jsonObject.getString("kind"),
                     jsonObject.getString("itemName"),
@@ -198,7 +200,7 @@ public class ItemServlet extends HttpServlet {
                     Double.parseDouble(jsonObject.getString("unitPrice"))
             );
 
-            if (itemDAO.update(item, connection)) {
+            if (itemBO.updateItem(item, connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message","Item Successfully Updated.");
