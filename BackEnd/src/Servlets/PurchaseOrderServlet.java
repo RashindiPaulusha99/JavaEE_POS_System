@@ -1,5 +1,6 @@
 package Servlets;
 
+import DAO.ItemDAOImpl;
 import DAO.OrderDAOImpl;
 import DAO.OrderDetailDAOImpl;
 import Entity.Order;
@@ -26,6 +27,7 @@ public class PurchaseOrderServlet extends HttpServlet {
 
     OrderDAOImpl orderDAO = new OrderDAOImpl();
     OrderDetailDAOImpl orderDetailDAO = new OrderDetailDAOImpl();
+    ItemDAOImpl itemDAO = new ItemDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -152,9 +154,7 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                     if (stm.executeUpdate()>0){
 
-                        PreparedStatement ptm = connection.prepareStatement("UPDATE Item SET qtyOnHand=(qtyOnHand - " + qty + " )  WHERE itemCode='"+ code +"'");
-
-                        if (ptm.executeUpdate()>0){
+                        if (itemDAO.updateQtyOnHand(code, qty, connection)){
 
                         }else {
                             connection.rollback();

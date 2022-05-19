@@ -13,6 +13,14 @@ public class OrderDTO {
     public OrderDTO() {
     }
 
+    public OrderDTO(String orderId, String customerId, String orderDate, double grossTotal, double netTotal) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.orderDate = orderDate;
+        this.grossTotal = grossTotal;
+        this.netTotal = netTotal;
+    }
+
     public OrderDTO(String orderId, String customerId, String orderDate, double grossTotal, double netTotal, ArrayList<OrderDetailDTO> items) {
         this.setOrderId(orderId);
         this.setCustomerId(customerId);

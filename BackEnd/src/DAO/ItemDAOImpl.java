@@ -97,4 +97,12 @@ public class ItemDAOImpl implements ItemDAO {
         }
         return ids;
     }
+
+    @Override
+    public boolean updateQtyOnHand(String code, int qty, Connection connection) throws SQLException {
+        return CrudUtil.executeUpdate("UPDATE Item SET qtyOnHand=(qtyOnHand - " + qty + " )  WHERE itemCode=?",
+                connection,
+                code
+        );
+    }
 }

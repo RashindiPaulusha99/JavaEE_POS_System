@@ -10,11 +10,12 @@ import java.util.ArrayList;
 public interface PlaceOrderBO extends SuperBO{
     boolean placeOrder(OrderDTO orderDTO,Connection connection);
     boolean saveOrderDetail(OrderDTO orderDTO, Connection connection);
-    boolean updateQtyOnHand(String code,int qty, Connection connection);
+    boolean updateQtyOnHand(String code,int qty, Connection connection) throws SQLException;
     String getOrderId(Connection connection) throws SQLException;
     int countOrders(Connection connection) throws SQLException;
     double findNetTotal(Connection connection) throws SQLException;
     ArrayList<OrderDetailDTO> searchOrderDetail(String id, Connection connection) throws SQLException;
+    OrderDTO searchOrder(String id, Connection connection) throws SQLException;
     int countQtyOnHand(String id, Connection connection) throws SQLException;
 
 }
