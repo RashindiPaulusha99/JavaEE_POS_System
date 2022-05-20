@@ -156,7 +156,7 @@ public class PurchaseOrderServlet extends HttpServlet {
 
                     if (stm.executeUpdate()>0){
 
-                        if (itemDAO.updateQtyOnHand(code, qty, connection)){
+                        if (placeOrderBO.updateQtyOnHand(code, qty, connection)){
 
                         }else {
                             connection.rollback();
@@ -177,8 +177,6 @@ public class PurchaseOrderServlet extends HttpServlet {
                 connection.rollback();
             }
 
-            connection.close();
-
         } catch (SQLException e) {
 
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -195,11 +193,13 @@ public class PurchaseOrderServlet extends HttpServlet {
             try {
 
                 connection.setAutoCommit(true);
+                connection.close();
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        }*/
+        }
+*/
 
         resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
@@ -226,7 +226,6 @@ public class PurchaseOrderServlet extends HttpServlet {
                         Double.parseDouble(jo.getString("total"))
                 ));
             }
-            System.out.println(orderDetailDTOS);
 
             OrderDTO orderDTO = new OrderDTO(
                     jsonObject.getString("orderId"),
@@ -236,27 +235,19 @@ public class PurchaseOrderServlet extends HttpServlet {
                     Double.parseDouble(jsonObject.getString("netTotal")),
                     orderDetailDTOS
             );
-            System.out.println(orderDTO);
 
             if (placeOrderBO.placeOrder(orderDTO,connection)) {
-
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Successfully Purchased Order.");
                 objectBuilder.add("status", resp.getStatus());
                 writer.print(objectBuilder.build());
 
-            }/*else {
-                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("message", "Failed Purchase Order.");
-                objectBuilder.add("status", resp.getStatus());
-                writer.print(objectBuilder.build());
-            }*/
+            }
 
             connection.close();
 
         } catch (SQLException e) {
-
             resp.setStatus(HttpServletResponse.SC_OK);
 
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();

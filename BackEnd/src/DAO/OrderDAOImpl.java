@@ -30,18 +30,21 @@ public class OrderDAOImpl implements OrderDAO{
 
     @Override
     public Order search(String id, Connection connection) throws SQLException {
-        ResultSet rst = CrudUtil.executeQuery("SELECT * FROM `Order` WHERE orderId=?",
+        ResultSet rst = CrudUtil.executeQuery(
+                "SELECT * FROM `Order` WHERE orderId=?",
                 connection,
                 id
         );
         if (rst.next()){
-            return new Order(
+            Order order = new Order(
                     rst.getString(1),
                     rst.getString(2),
                     rst.getString(3),
                     rst.getDouble(4),
                     rst.getDouble(5)
             );
+            System.out.println(order);
+            return order;
         }else {
             return null;
         }
@@ -87,4 +90,5 @@ public class OrderDAOImpl implements OrderDAO{
             return 0;
         }
     }
+
 }

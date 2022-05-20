@@ -21,8 +21,10 @@ public class PlaceOrderBOImpl implements PlaceOrderBO{
 
     @Override
     public boolean placeOrder(OrderDTO orderDTO, Connection connection) {
+        Connection con = null;
         try {
-            connection.setAutoCommit(false);
+            con = connection;
+            con.setAutoCommit(false);
 
             boolean ifSaveOrder = orderDAO.add(new Order(
                             orderDTO.getOrderId(),
@@ -32,31 +34,33 @@ public class PlaceOrderBOImpl implements PlaceOrderBO{
                             orderDTO.getNetTotal()),
                     connection
             );
+            System.out.println(ifSaveOrder+"saveorder");
 
             if (ifSaveOrder){
+                System.out.println(saveOrderDetail(orderDTO,connection)+"saveorderdetail");
                 if (saveOrderDetail(orderDTO,connection)){
-                    connection.commit();
+                    con.commit();
                     return true;
                 }else {
-                    connection.rollback();
+                    con.rollback();
                     return false;
                 }
             }else {
-                connection.rollback();
+                con.rollback();
                 return false;
             }
         } catch (SQLException throwables) {
         } finally {
             try {
 
-                connection.setAutoCommit(true);
+                con.setAutoCommit(true);
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -82,6 +86,7 @@ public class PlaceOrderBOImpl implements PlaceOrderBO{
 
     @Override
     public boolean updateQtyOnHand(String code, int qty, Connection connection) throws SQLException {
+        System.out.println(itemDAO.updateQtyOnHand(code,qty,connection)+"updateqty");
         return itemDAO.updateQtyOnHand(code,qty,connection);
     }
 
@@ -135,4 +140,5 @@ public class PlaceOrderBOImpl implements PlaceOrderBO{
     public int countQtyOnHand(String code, Connection connection) throws SQLException {
         return orderDetailDAO.countQtyOnHand(code,connection);
     }
+
 }
