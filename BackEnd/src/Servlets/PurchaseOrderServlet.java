@@ -103,6 +103,14 @@ public class PurchaseOrderServlet extends HttpServlet {
             connection.close();
 
         } catch (SQLException e) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("data",e.getLocalizedMessage());
+            objectBuilder.add("message","Error");
+            objectBuilder.add("status",resp.getStatus());
+            writer.print(objectBuilder.build());
+
             e.printStackTrace();
         }
     }

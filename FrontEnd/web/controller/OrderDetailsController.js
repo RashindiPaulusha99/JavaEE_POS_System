@@ -54,7 +54,6 @@ function searchDetailsForOrder(oid) {
         url: "http://localhost:8080/backend/purchaseOrder?option=SEARCHDETAILS&orderId=" + oid,
         method: "GET",
         success: function (response) {
-
             $("#tblOrderDetail tbody").empty()
             for (var oDetails of response) {
                 let raw = `<tr><td> ${oDetails.itemId} </td><td> ${oDetails.itemKind} </td><td> ${oDetails.itemName} </td><td> ${oDetails.sellQty} </td><td> ${oDetails.unitPrice} </td><td> ${oDetails.itemDiscount} </td><td> ${oDetails.total} </td></tr>`;
