@@ -35,10 +35,8 @@ public class PlaceOrderBOImpl implements PlaceOrderBO {
                             orderDTO.getNetTotal()),
                     connection
             );
-            System.out.println(ifSaveOrder+"saveorder");
 
             if (ifSaveOrder){
-                System.out.println(saveOrderDetail(orderDTO,connection)+"saveorderdetail");
                 if (saveOrderDetail(orderDTO,connection)){
                     con.commit();
                     return true;
@@ -82,13 +80,12 @@ public class PlaceOrderBOImpl implements PlaceOrderBO {
             }
         }
 
-        return false;
+        return true;
     }
 
     @Override
     public boolean updateQtyOnHand(String code, int qty, Connection connection) throws SQLException {
-        System.out.println(itemDAO.updateQtyOnHand(code,qty,connection)+"updateqty");
-        return itemDAO.updateQtyOnHand(code,qty,connection);
+        return itemDAO.updateQtyOnHand(code, qty, connection);
     }
 
     @Override

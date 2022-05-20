@@ -630,7 +630,16 @@ function addDataToOrderDB() {
 
 function clearAll() {
 
-    clearFieldsWhenAddItem();
+    $("#orderItemName").val("");
+    $("#orderItemCode").val("");
+    $("#orderKind").val("");
+    $("#orderQty").val("");
+    $("#orderPrice").val("");
+    $("#sellQty").val("");
+    $("#itemDiscount").val("");
+
+    $("#sellQty").css('border', '2px solid transparent');
+    $("#itemDiscount").css('border', '2px solid transparent');
 
     $("#orderCusName").val("");
     $("#orderCusId").val("");
