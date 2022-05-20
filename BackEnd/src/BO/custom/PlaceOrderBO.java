@@ -1,5 +1,6 @@
-package BO;
+package BO.custom;
 
+import BO.SuperBO;
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
 
@@ -7,7 +8,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public interface PlaceOrderBO extends SuperBO{
+public interface PlaceOrderBO extends SuperBO {
     boolean placeOrder(OrderDTO orderDTO,Connection connection);
     boolean saveOrderDetail(OrderDTO orderDTO, Connection connection) throws SQLException;
     boolean updateQtyOnHand(String code,int qty, Connection connection) throws SQLException;

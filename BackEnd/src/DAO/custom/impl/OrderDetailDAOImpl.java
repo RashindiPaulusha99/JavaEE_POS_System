@@ -1,5 +1,7 @@
-package DAO;
+package DAO.custom.impl;
 
+import DAO.CrudUtil;
+import DAO.custom.OrderDetailDAO;
 import Entity.OrderDetail;
 
 import java.sql.Connection;
@@ -7,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class OrderDetailDAOImpl implements OrderDetailDAO{
+public class OrderDetailDAOImpl implements OrderDetailDAO {
 
     @Override
     public boolean add(OrderDetail orderDetail, Connection connection) throws SQLException {

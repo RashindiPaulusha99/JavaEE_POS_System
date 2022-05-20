@@ -1,5 +1,10 @@
 package DAO;
 
+import DAO.custom.impl.CustomerDAOImpl;
+import DAO.custom.impl.ItemDAOImpl;
+import DAO.custom.impl.OrderDAOImpl;
+import DAO.custom.impl.OrderDetailDAOImpl;
+
 public class DAOFactory {
     private static DAOFactory daoFactory;
 

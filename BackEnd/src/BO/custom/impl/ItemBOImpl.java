@@ -1,7 +1,8 @@
-package BO;
+package BO.custom.impl;
 
+import BO.custom.ItemBO;
 import DAO.DAOFactory;
-import DAO.ItemDAO;
+import DAO.custom.ItemDAO;
 import DTO.ItemDTO;
 import Entity.Item;
 
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemBOImpl implements ItemBO{
+public class ItemBOImpl implements ItemBO {
 
     private ItemDAO itemDAO = (ItemDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.ITEM);
 

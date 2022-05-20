@@ -1,5 +1,9 @@
 package BO;
 
+import BO.custom.impl.CustomerBOImpl;
+import BO.custom.impl.ItemBOImpl;
+import BO.custom.impl.PlaceOrderBOImpl;
+
 public class BOFactory {
     private static BOFactory boFactory;
 

@@ -1,10 +1,8 @@
 package Servlets;
 
-import BO.ItemBOImpl;
-import DAO.ItemDAOImpl;
+import BO.BOFactory;
+import BO.custom.ItemBO;
 import DTO.ItemDTO;
-import Entity.Customer;
-import Entity.Item;
 
 import javax.annotation.Resource;
 import javax.json.*;
@@ -26,7 +24,7 @@ public class ItemServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
-    ItemBOImpl itemBO = new ItemBOImpl();
+    private ItemBO itemBO = (ItemBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ITEM);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

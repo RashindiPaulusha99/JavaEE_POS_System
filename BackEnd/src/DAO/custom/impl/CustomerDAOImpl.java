@@ -1,5 +1,7 @@
-package DAO;
+package DAO.custom.impl;
 
+import DAO.CrudUtil;
+import DAO.custom.CustomerDAO;
 import Entity.Customer;
 
 import java.sql.Connection;

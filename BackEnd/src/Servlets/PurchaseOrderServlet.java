@@ -1,14 +1,9 @@
 package Servlets;
 
 import BO.BOFactory;
-import BO.PlaceOrderBO;
-import DAO.ItemDAOImpl;
-import DAO.OrderDAOImpl;
-import DAO.OrderDetailDAOImpl;
+import BO.custom.PlaceOrderBO;
 import DTO.OrderDTO;
 import DTO.OrderDetailDTO;
-import Entity.Order;
-import Entity.OrderDetail;
 
 import javax.annotation.Resource;
 import javax.json.*;

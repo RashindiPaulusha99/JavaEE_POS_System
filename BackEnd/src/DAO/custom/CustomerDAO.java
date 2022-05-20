@@ -1,4 +1,4 @@
-package DAO;
+package DAO.custom;
 
 import DAO.CrudDAO;
 import Entity.Customer;

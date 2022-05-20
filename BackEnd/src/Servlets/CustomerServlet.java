@@ -1,9 +1,8 @@
 package Servlets;
 
-import BO.CustomerBOImpl;
-import DAO.CustomerDAOImpl;
+import BO.BOFactory;
+import BO.custom.CustomerBO;
 import DTO.CustomerDTO;
-import Entity.Customer;
 
 import javax.annotation.Resource;
 import javax.json.*;
@@ -25,7 +24,7 @@ public class CustomerServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource dataSource;
 
-    CustomerBOImpl customerBO = new CustomerBOImpl();
+    private CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
