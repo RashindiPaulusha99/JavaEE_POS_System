@@ -8,6 +8,7 @@
 # *Introduction* 📝
 This is a single page Pos System.
 This POS System is created using Bootstrap framework , CSS , HTML for Frontend and JavaEE Servlet API used for implement Backend.
+Besides , Ajax is used for connect frontend and backend.
 
 # *Objectives* 🔑
 * Implement Single Page Application
